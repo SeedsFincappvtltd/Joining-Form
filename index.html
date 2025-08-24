@@ -1,212 +1,796 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Employee Joining Form</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f9f9f9;
-    }
-    form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 700px;
-      margin: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .hidden {
-      display: none;
-    }
+    :root { --bg:#f6f8fb; --card:#ffffff; --text:#111827; --muted:#6b7280; --accent:#2563eb; --accent-2:#1d4ed8; --border:#e5e7eb; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .wrap { max-width: 1080px; margin: 32px auto; padding: 0 20px; }
+    h1 { margin:0 0 18px; font-size: 30px; text-align:center; font-weight:800; letter-spacing:.2px; }
+    .sub { text-align:center; color:var(--muted); margin-bottom:22px; }
+
+    form { background:var(--card); border:1px solid var(--border); border-radius:16px; padding: 24px; box-shadow: 0 12px 30px rgba(0,0,0,.06); }
+
     .section {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      background: #fdfdfd;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:18px;
+      margin-bottom:18px;
+      background:#fff;
     }
-    button {
-      margin-top: 20px;
-      padding: 10px 15px;
-      background: #007bff;
-      border: none;
-      color: #fff;
-      border-radius: 5px;
-      cursor: pointer;
+    .section h3 {
+      margin:0 0 14px;
+      font-size:18px; font-weight:800;
+      display:flex; align-items:center; gap:10px;
     }
-    button:hover {
-      background: #0056b3;
+    .badge {
+      background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe;
+      padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700;
+    }
+
+    .grid { display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 14px; }
+    .col-12 { grid-column: span 12; }
+    .col-6  { grid-column: span 6; }
+    .col-4  { grid-column: span 4; }
+    .col-3  { grid-column: span 3; }
+    .col-8  { grid-column: span 8; }
+
+    label { display:block; font-size: 13px; color: var(--muted); margin-bottom:6px; }
+    input, select, textarea {
+      width:100%; padding:11px 12px; border:1px solid var(--border);
+      border-radius:10px; font-size:14px; background:#fff; outline:none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
+    input[readonly] { background:#f3f4f6; }
+    .hint { font-size:12px; color:#6b7280; margin-top:6px; }
+    .error { color:#b91c1c; font-size: 13px; margin-top: 6px; }
+    .row { display:flex; gap:10px; }
+    .row > * { flex:1; }
+    .req { color:#ef4444; font-weight:700; margin-left:4px; }
+    .hidden { display:none !important; }
+
+    .toolbar {
+      display:flex; justify-content: space-between; align-items:center;
+      padding:12px 0 0; gap:12px;
+    }
+    .btn {
+      display:inline-flex; gap:8px; align-items:center; justify-content:center;
+      padding:12px 18px; border:none; border-radius:10px;
+      background:var(--accent); color:#fff; font-weight:700; cursor:pointer;
+    }
+    .btn:hover { background: var(--accent-2); }
+    .note { color:var(--muted); font-size:12px; }
+
+    @media (max-width: 980px) {
+      .col-6, .col-4, .col-3, .col-8 { grid-column: span 12; }
     }
   </style>
 </head>
 <body>
-  <form>
-    <h2>Employee Joining Form</h2>
+  <div class="wrap">
+    <h1>Employee Joining Form</h1>
+    <div class="sub">Please fill all required fields marked with <span class="req">*</span></div>
 
-    <!-- Full Name -->
-    <label for="fullName">Full Name <span style="color:red">*</span></label>
-    <input id="fullName" name="fullName" type="text" pattern="[A-Za-z ]+" required />
+    <form id="employeeForm" novalidate>
+      <!-- ================= Personal Details ================= -->
+      <div class="section">
+        <h3>Personal Details <span class="badge">Section 1</span></h3>
+        <div class="grid">
+          <div class="col-12">
+            <label for="fullName">Full Name <span class="req">*</span></label>
+            <input id="fullName" name="fullName" type="text" required pattern="[A-Za-z ]+" placeholder="e.g., Rahul Kumar Sharma">
+            <div class="hint">Alphabets and spaces only.</div>
+          </div>
 
-    <!-- Father's Name -->
-    <label for="fatherName">Father's Name <span style="color:red">*</span></label>
-    <input id="fatherName" name="fatherName" type="text" pattern="[A-Za-z ]+" required />
+          <div class="col-12">
+            <label for="fatherName">Father's Name <span class="req">*</span></label>
+            <input id="fatherName" name="fatherName" type="text" required pattern="[A-Za-z ]+" placeholder="e.g., Mohan Lal Sharma">
+          </div>
 
-    <!-- Gender -->
-    <label for="gender">Gender <span style="color:red">*</span></label>
-    <select id="gender" name="gender" required>
-      <option value="">Select…</option>
-      <option>Male</option>
-      <option>Female</option>
-      <option>Other</option>
-    </select>
+          <div class="col-4">
+            <label for="gender">Gender <span class="req">*</span></label>
+            <select id="gender" name="gender" required>
+              <option value="">Select…</option>
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+          </div>
 
-    <!-- Date of Birth -->
-    <label for="dob">Date of Birth <span style="color:red">*</span></label>
-    <input id="dob" name="dob" type="date" required />
+          <div class="col-4">
+            <label for="dob">Date of Birth <span class="req">*</span></label>
+            <input id="dob" name="dob" type="date" required>
+          </div>
 
-    <!-- Blood Group -->
-    <label for="bloodGroup">Blood Group <span style="color:red">*</span></label>
-    <select id="bloodGroup" name="bloodGroup" required>
-      <option value="">Select…</option>
-      <option>A+</option>
-      <option>A-</option>
-      <option>B+</option>
-      <option>B-</option>
-      <option>O+</option>
-      <option>O-</option>
-      <option>AB+</option>
-      <option>AB-</option>
-      <option>NA</option>
-    </select>
+          <div class="col-4">
+            <label for="bloodGroup">Blood Group <span class="req">*</span></label>
+            <select id="bloodGroup" name="bloodGroup" required>
+              <option value="">Select…</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option>
+              <option>AB+</option><option>AB-</option>
+              <option>NA</option>
+            </select>
+          </div>
 
-    <!-- Mobile -->
-    <label for="mobile">Mobile Number <span style="color:red">*</span></label>
-    <input id="mobile" name="mobile" type="text" pattern="[0-9]{10}" maxlength="10" required />
+          <div class="col-6">
+            <label for="mobile">Mobile Number <span class="req">*</span></label>
+            <input id="mobile" name="mobile" type="text" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" required placeholder="10 digits">
+          </div>
 
-    <!-- Email -->
-    <label for="email">Email Address <span style="color:red">*</span></label>
-    <input id="email" name="email" type="email" required />
+          <div class="col-6">
+            <label for="email">Email Address <span class="req">*</span></label>
+            <input id="email" name="email" type="email" required placeholder="name@example.com">
+          </div>
 
-    <!-- Marital Status -->
-    <label for="marital">Marital Status <span style="color:red">*</span></label>
-    <select id="marital" name="marital" required onchange="toggleMaritalFields()">
-      <option value="">Select…</option>
-      <option value="Married">Married</option>
-      <option value="Unmarried">Unmarried</option>
-      <option value="Divorced">Divorced</option>
-    </select>
-
-    <!-- Married Section -->
-    <div id="marriedSection" class="hidden section">
-      <label for="spouseName">Spouse Name <span style="color:red">*</span></label>
-      <input id="spouseName" name="spouseName" type="text" pattern="[A-Za-z ]+" />
-
-      <label for="spouseDob">Spouse DOB <span style="color:red">*</span></label>
-      <input id="spouseDob" name="spouseDob" type="date" />
-
-      <label for="marriageDate">Date of Marriage <span style="color:red">*</span></label>
-      <input id="marriageDate" name="marriageDate" type="date" />
-
-      <label for="children">Do you have children? <span style="color:red">*</span></label>
-      <select id="children" name="children" onchange="toggleChildrenFields()">
-        <option value="">Select…</option>
-        <option value="No">No</option>
-        <option value="Yes">Yes</option>
-      </select>
-
-      <div id="childrenSection" class="hidden">
-        <label for="howMany">How many children do you have? <span style="color:red">*</span></label>
-        <select id="howMany" name="howMany" onchange="toggleChildDetails()">
-          <option value="">Select…</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-        </select>
-
-        <div id="child1" class="hidden section">
-          <label for="child1Name">Child 1 Name <span style="color:red">*</span></label>
-          <input id="child1Name" name="child1Name" type="text" pattern="[A-Za-z ]+" />
-
-          <label for="child1Dob">Child 1 DOB <span style="color:red">*</span></label>
-          <input id="child1Dob" name="child1Dob" type="date" />
-        </div>
-
-        <div id="child2" class="hidden section">
-          <label for="child2Name">Child 2 Name <span style="color:red">*</span></label>
-          <input id="child2Name" name="child2Name" type="text" pattern="[A-Za-z ]+" />
-
-          <label for="child2Dob">Child 2 DOB <span style="color:red">*</span></label>
-          <input id="child2Dob" name="child2Dob" type="date" />
+          <div class="col-4">
+            <label for="maritalStatus">Marital Status <span class="req">*</span></label>
+            <select id="maritalStatus" name="maritalStatus" required>
+              <option value="">Select…</option>
+              <option value="Married">Married</option>
+              <option value="Unmarried">Unmarried</option>
+              <option value="Divorced">Divorced</option>
+            </select>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Unmarried/Divorced Section -->
-    <div id="singleSection" class="hidden section">
-      <label for="fatherDob">Father's DOB <span style="color:red">*</span></label>
-      <input id="fatherDob" name="fatherDob" type="date" />
+      <!-- ================= Spouse & Children (Married only) ================= -->
+      <div id="spouseSection" class="section hidden">
+        <h3>Spouse & Children Details <span class="badge">Section 2</span></h3>
+        <div class="grid">
+          <div class="col-4">
+            <label for="spouseName">Spouse Name <span class="req">*</span></label>
+            <input id="spouseName" name="spouseName" type="text" pattern="[A-Za-z ]+">
+          </div>
 
-      <label for="motherName">Mother's Name <span style="color:red">*</span></label>
-      <input id="motherName" name="motherName" type="text" pattern="[A-Za-z ]+" />
+          <div class="col-4">
+            <label for="spouseDob">Spouse DOB <span class="req">*</span></label>
+            <input id="spouseDob" name="spouseDob" type="date">
+          </div>
 
-      <label for="motherDob">Mother's DOB <span style="color:red">*</span></label>
-      <input id="motherDob" name="motherDob" type="date" />
-    </div>
+          <div class="col-4">
+            <label for="marriageDate">Date of Marriage <span class="req">*</span></label>
+            <input id="marriageDate" name="marriageDate" type="date">
+          </div>
 
-    <button type="submit">Submit</button>
-  </form>
+          <div class="col-4">
+            <label for="hasChildren">Do you have children? <span class="req">*</span></label>
+            <select id="hasChildren" name="hasChildren">
+              <option value="">Select…</option>
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+
+          <div id="childrenBlock" class="col-12 hidden">
+            <div class="grid">
+              <div class="col-3">
+                <label for="childrenCount">How many children? <span class="req">*</span></label>
+                <select id="childrenCount" name="childrenCount">
+                  <option value="">Select…</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="child1" class="section hidden" style="margin-top:12px;">
+              <div class="grid">
+                <div class="col-6">
+                  <label for="child1Name">Child 1 Name <span class="req">*</span></label>
+                  <input id="child1Name" name="child1Name" type="text" pattern="[A-Za-z ]+">
+                </div>
+                <div class="col-6">
+                  <label for="child1Dob">Child 1 DOB <span class="req">*</span></label>
+                  <input id="child1Dob" name="child1Dob" type="date">
+                </div>
+              </div>
+            </div>
+
+            <div id="child2" class="section hidden" style="margin-top:12px;">
+              <div class="grid">
+                <div class="col-6">
+                  <label for="child2Name">Child 2 Name <span class="req">*</span></label>
+                  <input id="child2Name" name="child2Name" type="text" pattern="[A-Za-z ]+">
+                </div>
+                <div class="col-6">
+                  <label for="child2Dob">Child 2 DOB <span class="req">*</span></label>
+                  <input id="child2Dob" name="child2Dob" type="date">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= Parents (Always required) ================= -->
+      <div id="parentsSection" class="section">
+        <h3>Parents' Details <span class="badge">Section 3</span></h3>
+        <div class="grid">
+          <div class="col-4">
+            <label for="fatherDob">Father's DOB <span class="req">*</span></label>
+            <input id="fatherDob" name="fatherDob" type="date" required>
+          </div>
+          <div class="col-4">
+            <label for="motherName">Mother's Name <span class="req">*</span></label>
+            <input id="motherName" name="motherName" type="text" pattern="[A-Za-z ]+" required>
+          </div>
+          <div class="col-4">
+            <label for="motherDob">Mother's DOB <span class="req">*</span></label>
+            <input id="motherDob" name="motherDob" type="date" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= Identification ================= -->
+      <div class="section">
+        <h3>Identification <span class="badge">Section 4</span></h3>
+        <div class="grid">
+          <div class="col-4">
+            <label for="aadhaar">Aadhaar Number <span class="req">*</span></label>
+            <input id="aadhaar" name="aadhaar" type="text" inputmode="numeric" maxlength="12" pattern="[0-9]{12}" required>
+          </div>
+
+          <div class="col-4">
+            <label for="pan">PAN Number <span class="req">*</span></label>
+            <input id="pan" name="pan" type="text" maxlength="10" required pattern="[A-Z]{3}P[0-9]{4}[A-Z]" placeholder="e.g., ABCPD1234F">
+            <div class="hint">Format: 5 letters, <strong>P</strong>, 4 digits, 1 letter</div>
+          </div>
+
+          <div class="col-4">
+            <label for="dl">Driving License Number <span class="req">*</span></label>
+            <input id="dl" name="dl" type="text" pattern="[A-Za-z0-9]+" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= Address ================= -->
+      <div class="section">
+        <h3>Address Details <span class="badge">Section 5</span></h3>
+        <div class="grid">
+          <div class="col-12"><strong>Permanent Address</strong></div>
+          <div class="col-12">
+            <label for="permAddress">Address <span class="req">*</span></label>
+            <input id="permAddress" name="permAddress" required>
+          </div>
+          <div class="col-4">
+            <label for="permCity">City <span class="req">*</span></label>
+            <input id="permCity" name="permCity" required pattern="[A-Za-z ]+">
+          </div>
+          <div class="col-4">
+            <label for="permState">State <span class="req">*</span></label>
+            <input id="permState" name="permState" required pattern="[A-Za-z ]+">
+          </div>
+          <div class="col-4">
+            <label for="permPincode">Pincode <span class="req">*</span></label>
+            <input id="permPincode" name="permPincode" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" required>
+          </div>
+
+          <div class="col-12" style="margin-top:4px;"><strong>Current Address</strong></div>
+          <div class="col-12">
+            <label><input type="checkbox" id="sameAddress"> Current address same as Permanent</label>
+          </div>
+          <div class="col-12">
+            <label for="currAddress">Address <span class="req">*</span></label>
+            <input id="currAddress" name="currAddress" required>
+          </div>
+          <div class="col-4">
+            <label for="currCity">City <span class="req">*</span></label>
+            <input id="currCity" name="currCity" required pattern="[A-Za-z ]+">
+          </div>
+          <div class="col-4">
+            <label for="currState">State <span class="req">*</span></label>
+            <input id="currState" name="currState" required pattern="[A-Za-z ]+">
+          </div>
+          <div class="col-4">
+            <label for="currPincode">Pincode <span class="req">*</span></label>
+            <input id="currPincode" name="currPincode" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= Job Details ================= -->
+      <div class="section">
+        <h3>Job Details <span class="badge">Section 6</span></h3>
+        <div class="grid">
+          <div class="col-4">
+            <label for="doj">Date of Joining <span class="req">*</span></label>
+            <input id="doj" name="doj" type="date" required>
+            <div class="hint">Must be today or within the last 2 days.</div>
+          </div>
+
+          <div class="col-4">
+            <label for="department">Department <span class="req">*</span></label>
+            <select id="department" name="department" required>
+              <option value="">Select…</option>
+              <option>Business-IL</option>
+              <option>Secured Business Loan</option>
+              <option>Credit</option>
+              <option>Collection</option>
+              <option>HR</option>
+              <option>IT</option>
+              <option>Operations</option>
+              <option>RISK</option>
+              <option>Audit</option>
+              <option>TVR</option>
+              <option>Sales Calling</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div id="otherDeptWrap" class="col-4 hidden">
+            <label for="otherDepartment">Other Department <span class="req">*</span></label>
+            <input id="otherDepartment" name="otherDepartment" pattern="[A-Za-z ]+">
+          </div>
+
+          <div id="designationWrap" class="col-4">
+            <label for="designation">Designation <span class="req">*</span></label>
+            <input id="designation" name="designation" pattern="[A-Za-z ]+" required>
+          </div>
+
+          <div class="col-4">
+            <label for="region">Region <span class="req">*</span></label>
+            <select id="region" name="region" required>
+              <option value="">Select…</option>
+              <option>Head Office</option>
+              <option>Agra</option>
+              <option>Karnal</option>
+              <option>Rewari</option>
+              <option>Jaipur</option>
+              <option>Hapur</option>
+              <option>Gorakhpur</option>
+              <option>Indore</option>
+            </select>
+          </div>
+
+          <div class="col-4">
+            <label for="branch">Branch <span class="req">*</span></label>
+            <input id="branch" name="branch" required pattern="[A-Za-z ]+">
+          </div>
+
+          <div class="col-4">
+            <label for="uan">UAN Number <span class="req">*</span></label>
+            <input id="uan" name="uan" inputmode="numeric" maxlength="12" pattern="[0-9]{12}" required>
+          </div>
+
+          <div class="col-4">
+            <label for="esic">ESIC Number <span class="req">*</span></label>
+            <input id="esic" name="esic" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= Education & Bank ================= -->
+      <div class="section">
+        <h3>Education & Bank Details <span class="badge">Section 7</span></h3>
+        <div class="grid">
+          <div class="col-4">
+            <label for="qualification">Highest Qualification <span class="req">*</span></label>
+            <select id="qualification" name="qualification" required>
+              <option value="">Select…</option>
+              <option>PGDM</option>
+              <option>Post Graduate</option>
+              <option>Graduate</option>
+              <option>Intermediate</option>
+            </select>
+          </div>
+
+          <div class="col-4">
+            <label for="bank">Select Your Bank <span class="req">*</span></label>
+            <select id="bank" name="bank" required>
+              <option value="">Select…</option>
+              <option>State Bank of India</option>
+              <option>HDFC Bank</option>
+              <option>AU Small Finance Bank</option>
+              <option>Indian Bank</option>
+              <option>ICICI Bank</option>
+              <option>Axis Bank</option>
+              <option>RBL Bank</option>
+              <option>Bank of Baroda</option>
+              <option>Punjab National Bank</option>
+              <option>Canara Bank</option>
+              <option>Bank of India</option>
+              <option>Union Bank of India</option>
+              <option>Central Bank of India</option>
+              <option>Indian Overseas Bank</option>
+              <option>UCO Bank</option>
+              <option>Punjab & Sind Bank</option>
+              <option>IDBI Bank</option>
+              <option>IDBI First Bank</option>
+              <option>Kotak Mahindra Bank</option>
+              <option>IndusInd Bank</option>
+              <option>Yes Bank</option>
+              <option>Bandhan Bank</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div id="otherBankWrap" class="col-4 hidden">
+            <label for="otherBank">Other Bank Name <span class="req">*</span></label>
+            <input id="otherBank" name="otherBank">
+          </div>
+
+          <div class="col-4">
+            <label for="accountNumber">Bank Account Number <span class="req">*</span></label>
+            <input id="accountNumber" name="accountNumber" inputmode="numeric" pattern="[0-9]+" required>
+          </div>
+
+          <div class="col-4">
+            <label for="confirmAccountNumber">Confirm Bank Account Number <span class="req">*</span></label>
+            <input id="confirmAccountNumber" name="confirmAccountNumber" inputmode="numeric" pattern="[0-9]+" required>
+            <div id="acctErr" class="error hidden">Account numbers do not match.</div>
+          </div>
+
+          <div class="col-4">
+            <label for="ifsc">IFSC Code <span class="req">*</span></label>
+            <input id="ifsc" name="ifsc" maxlength="11" pattern="[A-Z]{4}0[A-Z0-9]{6}" required placeholder="e.g., SBIN0XXXXXX">
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= Experience / Fresher ================= -->
+      <div class="section">
+        <h3>Work History <span class="badge">Section 8</span></h3>
+        <div class="grid">
+          <div class="col-4">
+            <label for="expStatus">Experienced / Fresher <span class="req">*</span></label>
+            <select id="expStatus" name="expStatus" required>
+              <option value="">Select…</option>
+              <option value="Experienced">Experienced</option>
+              <option value="Fresher">Fresher</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="expDetails" class="section hidden" style="margin-top:12px;">
+          <div class="grid">
+            <div class="col-12"><strong>Previous Employment</strong></div>
+            <div class="col-4">
+              <label for="prevCompany">Previous Company Name <span class="req">*</span></label>
+              <input id="prevCompany" name="prevCompany" pattern="[A-Za-z ]+">
+            </div>
+            <div class="col-4">
+              <label for="prevDesignation">Previous Designation <span class="req">*</span></label>
+              <input id="prevDesignation" name="prevDesignation" pattern="[A-Za-z ]+">
+            </div>
+            <div class="col-4">
+              <label for="prevBranch">Previous Branch <span class="req">*</span></label>
+              <input id="prevBranch" name="prevBranch" pattern="[A-Za-z ]+">
+            </div>
+            <div class="col-4">
+              <label for="lastWorkingDay">Last Working Day <span class="req">*</span></label>
+              <input id="lastWorkingDay" name="lastWorkingDay" type="date">
+            </div>
+          </div>
+        </div>
+
+        <div id="fresherDetails" class="section hidden" style="margin-top:12px;">
+          <div class="grid">
+            <div class="col-12"><strong>Referral</strong></div>
+            <div class="col-4">
+              <label for="refBy">Referred by <span class="req">*</span></label>
+              <select id="refBy" name="refBy">
+                <option value="">Select…</option>
+                <option>Social Media</option>
+                <option>Job Portal</option>
+                <option>Seeds Employee reference</option>
+              </select>
+            </div>
+
+            <div id="refExtra" class="col-12 hidden">
+              <div class="grid">
+                <div class="col-4">
+                  <label for="refCode">Employee code of referrer <span class="req">*</span></label>
+                  <input id="refCode" name="refCode" pattern="[0-9]+">
+                </div>
+                <div class="col-4">
+                  <label for="refName">Employee name of referrer <span class="req">*</span></label>
+                  <input id="refName" name="refName" pattern="[A-Za-z ]+">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= Nominee & Emergency ================= -->
+      <div class="section">
+        <h3>Nominee & Emergency Contacts <span class="badge">Section 9</span></h3>
+        <div class="grid">
+          <div class="col-4">
+            <label for="nomineeName">Nominee's Name <span class="req">*</span></label>
+            <input id="nomineeName" name="nomineeName" required pattern="[A-Za-z ]+">
+          </div>
+          <div class="col-4">
+            <label for="nomineeDob">Nominee's Date of Birth <span class="req">*</span></label>
+            <input id="nomineeDob" name="nomineeDob" type="date" required>
+          </div>
+          <div class="col-4">
+            <label for="nomineeRelation">Nominee's Relation <span class="req">*</span></label>
+            <select id="nomineeRelation" name="nomineeRelation" required>
+              <option>Father</option><option>Mother</option><option>Spouse</option><option>Brother</option><option>Sister</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <label for="nomineeShare">Nominee's Share <span class="req">*</span></label>
+            <input id="nomineeShare" name="nomineeShare" value="100%" readonly>
+          </div>
+
+          <div class="col-12" style="margin-top:6px;"><strong>Emergency Contacts</strong></div>
+
+          <div class="col-4">
+            <label for="emgName1">Emergency Contact Name 1 <span class="req">*</span></label>
+            <input id="emgName1" name="emgName1" required pattern="[A-Za-z ]+">
+          </div>
+          <div class="col-4">
+            <label for="emgNum1">Emergency Contact Number 1 <span class="req">*</span></label>
+            <input id="emgNum1" name="emgNum1" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" required>
+            <div id="emg1Err" class="error hidden">Emergency number 1 must be different from mobile.</div>
+          </div>
+          <div class="col-4">
+            <label for="emgRel1">Relation 1 <span class="req">*</span></label>
+            <select id="emgRel1" name="emgRel1" required>
+              <option>Father</option><option>Mother</option><option>Spouse</option><option>Brother</option><option>Sister</option>
+            </select>
+          </div>
+
+          <div class="col-4">
+            <label for="emgName2">Emergency Contact Name 2 <span class="req">*</span></label>
+            <input id="emgName2" name="emgName2" required pattern="[A-Za-z ]+">
+          </div>
+          <div class="col-4">
+            <label for="emgNum2">Emergency Contact Number 2 <span class="req">*</span></label>
+            <input id="emgNum2" name="emgNum2" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" required>
+            <div id="emg2Err" class="error hidden">Emergency number 2 must be different from mobile.</div>
+          </div>
+          <div class="col-4">
+            <label for="emgRel2">Relation 2 <span class="req">*</span></label>
+            <select id="emgRel2" name="emgRel2" required>
+              <option>Father</option><option>Mother</option><option>Spouse</option><option>Brother</option><option>Sister</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= Documents Upload ================= -->
+      <div class="section">
+        <h3>Upload Documents <span class="badge">Section 10</span></h3>
+        <div class="grid">
+          <div class="col-8">
+            <input id="docs" type="file" name="documents" multiple required accept=".pdf,.jpg,.jpeg,.png,.webp">
+            <div class="hint">Accepted: PDF/JPG/PNG • You can select multiple files.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <span class="note">Review before submitting. Required fields are validated.</span>
+        <button type="submit" class="btn">Submit</button>
+      </div>
+    </form>
+  </div>
 
   <script>
-    function toggleMaritalFields() {
-      const marital = document.getElementById("marital").value;
-      document.getElementById("marriedSection").classList.add("hidden");
-      document.getElementById("singleSection").classList.add("hidden");
+    // ---------- Helpers ----------
+    const $ = (id) => document.getElementById(id);
+    const show = (el) => el.classList.remove('hidden');
+    const hide = (el) => el.classList.add('hidden');
+    const setReq = (el, req) => { if (!el) return; el.required = !!req; };
 
-      if (marital === "Married") {
-        document.getElementById("marriedSection").classList.remove("hidden");
-      } else if (marital === "Unmarried" || marital === "Divorced") {
-        document.getElementById("singleSection").classList.remove("hidden");
+    // Uppercase PAN + IFSC automatically
+    $('pan').addEventListener('input', () => { $('pan').value = $('pan').value.toUpperCase(); });
+    $('ifsc').addEventListener('input', () => { $('ifsc').value = $('ifsc').value.toUpperCase(); });
+
+    // Numeric-only enforcement for some fields
+    ['mobile','aadhaar','permPincode','currPincode','uan','emgNum1','emgNum2','accountNumber','confirmAccountNumber']
+      .forEach(id => $(id).addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^0-9]/g,''); }));
+
+    // DoJ within last 2 days (and not future)
+    function setDojWindow() {
+      const today = new Date();
+      const max = today.toISOString().split('T')[0];
+      const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
+      const min = minDate.toISOString().split('T')[0];
+      const doj = $('doj');
+      doj.min = min;
+      doj.max = max;
+      doj.addEventListener('input', () => {
+        doj.setCustomValidity('');
+        if (doj.value && (doj.value < min || doj.value > max)) {
+          doj.setCustomValidity('Date of Joining must be today or within last 2 days.');
+        }
+      });
+    }
+
+    // Marital toggling (Parents are ALWAYS required; Spouse section only when Married)
+    function updateMarital() {
+      const val = $('maritalStatus').value;
+      if (val === 'Married') {
+        show($('spouseSection'));
+        // make spouse fields required
+        setReq($('spouseName'), true);
+        setReq($('spouseDob'), true);
+        setReq($('marriageDate'), true);
+        setReq($('hasChildren'), true);
+      } else {
+        hide($('spouseSection'));
+        // clear spouse requireds & child subsections
+        setReq($('spouseName'), false);
+        setReq($('spouseDob'), false);
+        setReq($('marriageDate'), false);
+        setReq($('hasChildren'), false);
+        hide($('childrenBlock'));
+        setReq($('childrenCount'), false);
+        toggleChildrenCount('0');
+      }
+      // Parents are always visible & required (as per spec)
+      setReq($('fatherDob'), true);
+      setReq($('motherName'), true);
+      setReq($('motherDob'), true);
+    }
+
+    // Children toggling
+    function updateHasChildren() {
+      const val = $('hasChildren').value;
+      if (val === 'Yes') {
+        show($('childrenBlock'));
+        setReq($('childrenCount'), true);
+      } else {
+        hide($('childrenBlock'));
+        setReq($('childrenCount'), false);
+        toggleChildrenCount('0');
       }
     }
 
-    function toggleChildrenFields() {
-      const children = document.getElementById("children").value;
-      document.getElementById("childrenSection").classList.add("hidden");
-      if (children === "Yes") {
-        document.getElementById("childrenSection").classList.remove("hidden");
+    function toggleChildrenCount(val = $('childrenCount').value) {
+      hide($('child1')); hide($('child2'));
+      setReq($('child1Name'), false); setReq($('child1Dob'), false);
+      setReq($('child2Name'), false); setReq($('child2Dob'), false);
+
+      if (val === '1') {
+        show($('child1'));
+        setReq($('child1Name'), true); setReq($('child1Dob'), true);
+      } else if (val === '2') {
+        show($('child1')); show($('child2'));
+        setReq($('child1Name'), true); setReq($('child1Dob'), true);
+        setReq($('child2Name'), true); setReq($('child2Dob'), true);
       }
     }
 
-    function toggleChildDetails() {
-      const howMany = document.getElementById("howMany").value;
-      document.getElementById("child1").classList.add("hidden");
-      document.getElementById("child2").classList.add("hidden");
-
-      if (howMany === "1") {
-        document.getElementById("child1").classList.remove("hidden");
-      } else if (howMany === "2") {
-        document.getElementById("child1").classList.remove("hidden");
-        document.getElementById("child2").classList.remove("hidden");
+    // Department: Other vs Designation
+    function updateDepartment() {
+      const val = $('department').value;
+      if (val === 'Other') {
+        show($('otherDeptWrap'));
+        setReq($('otherDepartment'), true);
+        hide($('designationWrap'));
+        setReq($('designation'), false);
+      } else {
+        hide($('otherDeptWrap'));
+        setReq($('otherDepartment'), false);
+        show($('designationWrap'));
+        setReq($('designation'), true);
       }
     }
+
+    // Bank Other
+    function updateBank() {
+      const val = $('bank').value;
+      if (val === 'Other') {
+        show($('otherBankWrap'));
+        setReq($('otherBank'), true);
+      } else {
+        hide($('otherBankWrap'));
+        setReq($('otherBank'), false);
+      }
+    }
+
+    // Experience vs Fresher
+    function updateExpStatus() {
+      const val = $('expStatus').value;
+      if (val === 'Experienced') {
+        show($('expDetails')); hide($('fresherDetails'));
+        // requireds
+        ['prevCompany','prevDesignation','prevBranch','lastWorkingDay'].forEach(id=>setReq($(id), true));
+        setReq($('refBy'), false); hide($('refExtra')); setReq($('refCode'), false); setReq($('refName'), false);
+      } else if (val === 'Fresher') {
+        hide($('expDetails')); show($('fresherDetails'));
+        ['prevCompany','prevDesignation','prevBranch','lastWorkingDay'].forEach(id=>setReq($(id), false));
+        setReq($('refBy'), true);
+      } else {
+        hide($('expDetails')); hide($('fresherDetails'));
+        ['prevCompany','prevDesignation','prevBranch','lastWorkingDay','refBy','refCode','refName'].forEach(id=>setReq($(id), false));
+        hide($('refExtra'));
+      }
+    }
+
+    // Referrer extra
+    function updateRefBy() {
+      const val = $('refBy').value;
+      if (val === 'Seeds Employee reference') {
+        show($('refExtra'));
+        setReq($('refCode'), true);
+        setReq($('refName'), true);
+      } else {
+        hide($('refExtra'));
+        setReq($('refCode'), false);
+        setReq($('refName'), false);
+      }
+    }
+
+    // Same address copy
+    $('sameAddress').addEventListener('change', (e) => {
+      if (e.target.checked) {
+        $('currAddress').value = $('permAddress').value;
+        $('currCity').value = $('permCity').value;
+        $('currState').value = $('permState').value;
+        $('currPincode').value = $('permPincode').value;
+      }
+    });
+
+    // Account number match
+    function checkAccountMatch() {
+      const a = $('accountNumber').value.trim();
+      const b = $('confirmAccountNumber').value.trim();
+      if (a && b && a !== b) {
+        show($('acctErr'));
+        $('confirmAccountNumber').setCustomValidity('Account numbers do not match.');
+      } else {
+        hide($('acctErr'));
+        $('confirmAccountNumber').setCustomValidity('');
+      }
+    }
+    $('accountNumber').addEventListener('input', checkAccountMatch);
+    $('confirmAccountNumber').addEventListener('input', checkAccountMatch);
+
+    // Emergency numbers must differ from mobile
+    function checkEmergencyDifferent() {
+      const m = $('mobile').value;
+      const e1 = $('emgNum1').value;
+      const e2 = $('emgNum2').value;
+      if (m && e1 && m === e1) { show($('emg1Err')); $('emgNum1').setCustomValidity('Must be different from mobile'); }
+      else { hide($('emg1Err')); $('emgNum1').setCustomValidity(''); }
+      if (m && e2 && m === e2) { show($('emg2Err')); $('emgNum2').setCustomValidity('Must be different from mobile'); }
+      else { hide($('emg2Err')); $('emgNum2').setCustomValidity(''); }
+    }
+    $('mobile').addEventListener('input', checkEmergencyDifferent);
+    $('emgNum1').addEventListener('input', checkEmergencyDifferent);
+    $('emgNum2').addEventListener('input', checkEmergencyDifferent);
+
+    // Listeners for dynamic sections
+    $('maritalStatus').addEventListener('change', updateMarital);
+    $('hasChildren').addEventListener('change', updateHasChildren);
+    $('childrenCount').addEventListener('change', () => toggleChildrenCount());
+    $('department').addEventListener('change', updateDepartment);
+    $('bank').addEventListener('change', updateBank);
+    $('expStatus').addEventListener('change', updateExpStatus);
+    $('refBy').addEventListener('change', updateRefBy);
+
+    // Submission: rely on HTML5 validation + our custom messages
+    $('employeeForm').addEventListener('submit', (e) => {
+      checkAccountMatch();
+      checkEmergencyDifferent();
+      const form = e.target;
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        form.reportValidity();
+      }
+    });
+
+    // Init on load
+    setDojWindow();
+    updateMarital();          // sets spouse visibility & parents reqs
+    updateHasChildren();
+    toggleChildrenCount('0');
+    updateDepartment();
+    updateBank();
+    updateExpStatus();
+    updateRefBy();
   </script>
 </body>
 </html>
