@@ -238,8 +238,8 @@
 
           <div class="col-4">
             <label for="pan">PAN Number <span class="req">*</span></label>
-            <input id="pan" name="pan" type="text" maxlength="10" required pattern="[A-Z]{3}P[0-9]{4}[A-Z]" placeholder="e.g., ABCPD1234F">
-            <div class="hint">Format: 5 letters, <strong>P</strong>, 4 digits, 1 letter</div>
+            <input id="pan" name="pan" type="text" maxlength="10" required pattern="[A-Z]{3}P[A-Z]{1}[0-9]{4}[A-Z]" placeholder="e.g., ABCPD1234F">
+            <div class="hint">Format: 3 letters, <strong>P</strong>,1 letter, 4 digits, 1 letter</div>
           </div>
 
           <div class="col-4">
@@ -556,24 +556,87 @@
           </div>
         </div>
       </div>
+<!-- ================= Documents Upload ================= -->
+<div class="section">
+  <h3>Documents Upload <span class="badge">Section 10</span></h3>
+  <div class="grid">
+    <div class="col-6">
+      <label for="resume">Resume <span class="req">*</span></label>
+      <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx" required>
+    </div>
 
-      <!-- ================= Documents Upload ================= -->
-      <div class="section">
-        <h3>Upload Documents <span class="badge">Section 10</span></h3>
-        <div class="grid">
-          <div class="col-8">
-            <input id="docs" type="file" name="documents" multiple required accept=".pdf,.jpg,.jpeg,.png,.webp">
-            <div class="hint">Accepted: PDF/JPG/PNG • You can select multiple files.</div>
-          </div>
-        </div>
-      </div>
+    <div class="col-6">
+      <label for="photo">Photo <span class="req">*</span></label>
+      <input id="photo" name="photo" type="file" accept=".jpg,.jpeg,.png" required>
+    </div>
 
-      <div class="toolbar">
-        <span class="note">Review before submitting. Required fields are validated.</span>
-        <button type="submit" class="btn">Submit</button>
-      </div>
-    </form>
+    <div class="col-6">
+      <label for="aadhaarUpload">Aadhaar (Multiple Upload) <span class="req">*</span></label>
+      <input id="aadhaarUpload" name="aadhaarUpload[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+    </div>
+
+    <div class="col-6">
+      <label for="panUpload">PAN <span class="req">*</span></label>
+      <input id="panUpload" name="panUpload" type="file" accept=".pdf,.jpg,.jpeg,.png" required>
+    </div>
+
+    <div class="col-6">
+      <label for="dlUpload">Driving License (Multiple Upload) <span class="req">*</span></label>
+      <input id="dlUpload" name="dlUpload[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+    </div>
+
+    <div class="col-6">
+      <label for="familyPhoto">Family Photo (For ESIC) (Multiple Upload) <span class="req">*</span></label>
+      <input id="familyPhoto" name="familyPhoto[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+    </div>
+
+    <div class="col-6">
+      <label for="signature">Signature <span class="req">*</span></label>
+      <input id="signature" name="signature" type="file" accept=".pdf,.jpg,.jpeg,.png" required>
+    </div>
+
+    <div class="col-6">
+      <label for="fatherAadhaar">Father's Aadhaar (Multiple Upload) <span class="req">*</span></label>
+      <input id="fatherAadhaar" name="fatherAadhaar[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+    </div>
+
+    <div class="col-6">
+      <label for="motherAadhaar">Mother's Aadhaar (Multiple Upload) <span class="req">*</span></label>
+      <input id="motherAadhaar" name="motherAadhaar[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+    </div>
+
+    <div id="spouseAadhaarUpload" class="col-6 hidden">
+      <label for="spouseAadhaar">Spouse Aadhaar (Multiple Upload) <span class="req">*</span></label>
+      <input id="spouseAadhaar" name="spouseAadhaar[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+    </div>
+
+    <div id="childrenAadhaarUpload" class="col-6 hidden">
+      <label for="childrenAadhaar">Children Aadhaar (Multiple Upload) <span class="req">*</span></label>
+      <input id="childrenAadhaar" name="childrenAadhaar[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+    </div>
+
+    <div class="col-6">
+      <label for="educationCert">Educational Certificates (Multiple Upload) <span class="req">*</span></label>
+      <input id="educationCert" name="educationCert[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+    </div>
+
+    <div id="relievingWrap" class="col-6 hidden">
+      <label for="relievingLetter">Relieving Letter (Multiple Upload) <span class="req">*</span></label>
+      <input id="relievingLetter" name="relievingLetter[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+    </div>
+
+    <div id="salarySlipWrap" class="col-6 hidden">
+      <label for="salarySlips">Three Months Salary Slips (Multiple Upload) <span class="req">*</span></label>
+      <input id="salarySlips" name="salarySlips[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+    </div>
   </div>
+</div>
+
+
+<div class="toolbar">
+  <span class="note">Review before submitting. Required fields are validated.</span>
+  <button type="submit" class="btn">Submit</button>
+</div>
 
   <script>
     // ---------- Helpers ----------
@@ -608,107 +671,121 @@
     }
 
     // Marital toggling (Parents are ALWAYS required; Spouse section only when Married)
-    function updateMarital() {
-      const val = $('maritalStatus').value;
-      if (val === 'Married') {
-        show($('spouseSection'));
-        // make spouse fields required
-        setReq($('spouseName'), true);
-        setReq($('spouseDob'), true);
-        setReq($('marriageDate'), true);
-        setReq($('hasChildren'), true);
-      } else {
-        hide($('spouseSection'));
-        // clear spouse requireds & child subsections
-        setReq($('spouseName'), false);
-        setReq($('spouseDob'), false);
-        setReq($('marriageDate'), false);
-        setReq($('hasChildren'), false);
-        hide($('childrenBlock'));
-        setReq($('childrenCount'), false);
-        toggleChildrenCount('0');
-      }
-      // Parents are always visible & required (as per spec)
-      setReq($('fatherDob'), true);
-      setReq($('motherName'), true);
-      setReq($('motherDob'), true);
+   function updateMarital() {
+    const val = $('maritalStatus').value;
+    if (val === 'Married') {
+      show($('spouseSection'));
+      show($('spouseAadhaarUpload'));   // show spouse Aadhaar upload
+      setReq($('spouseName'), true);
+      setReq($('spouseDob'), true);
+      setReq($('marriageDate'), true);
+      setReq($('hasChildren'), true);
+      setReq($('spouseAadhaar'), true); // Aadhaar upload required
+    } else {
+      hide($('spouseSection'));
+      hide($('spouseAadhaarUpload'));
+      setReq($('spouseName'), false);
+      setReq($('spouseDob'), false);
+      setReq($('marriageDate'), false);
+      setReq($('hasChildren'), false);
+      setReq($('spouseAadhaar'), false);
+
+      hide($('childrenBlock'));
+      hide($('childrenAadhaarUpload'));
+      setReq($('childrenCount'), false);
+      setReq($('childrenAadhaar'), false);
+      toggleChildrenCount('0');
     }
-
-    // Children toggling
-    function updateHasChildren() {
-      const val = $('hasChildren').value;
-      if (val === 'Yes') {
-        show($('childrenBlock'));
-        setReq($('childrenCount'), true);
-      } else {
-        hide($('childrenBlock'));
-        setReq($('childrenCount'), false);
-        toggleChildrenCount('0');
-      }
+    setReq($('fatherDob'), true);
+    setReq($('motherName'), true);
+    setReq($('motherDob'), true);
+  }
+  // Children toggling
+  function updateHasChildren() {
+    const val = $('hasChildren').value;
+    if (val === 'Yes') {
+      show($('childrenBlock'));
+      show($('childrenAadhaarUpload')); // Aadhaar upload section for children
+      setReq($('childrenCount'), true);
+      setReq($('childrenAadhaar'), true);
+    } else {
+      hide($('childrenBlock'));
+      hide($('childrenAadhaarUpload'));
+      setReq($('childrenCount'), false);
+      setReq($('childrenAadhaar'), false);
+      toggleChildrenCount('0');
     }
+  }
 
-    function toggleChildrenCount(val = $('childrenCount').value) {
-      hide($('child1')); hide($('child2'));
-      setReq($('child1Name'), false); setReq($('child1Dob'), false);
-      setReq($('child2Name'), false); setReq($('child2Dob'), false);
+  function toggleChildrenCount(val = $('childrenCount').value) {
+    hide($('child1')); hide($('child2'));
+    setReq($('child1Name'), false); setReq($('child1Dob'), false);
+    setReq($('child2Name'), false); setReq($('child2Dob'), false);
 
-      if (val === '1') {
-        show($('child1'));
-        setReq($('child1Name'), true); setReq($('child1Dob'), true);
-      } else if (val === '2') {
-        show($('child1')); show($('child2'));
-        setReq($('child1Name'), true); setReq($('child1Dob'), true);
-        setReq($('child2Name'), true); setReq($('child2Dob'), true);
-      }
+    if (val === '1') {
+      show($('child1'));
+      setReq($('child1Name'), true); setReq($('child1Dob'), true);
+    } else if (val === '2') {
+      show($('child1')); show($('child2'));
+      setReq($('child1Name'), true); setReq($('child1Dob'), true);
+      setReq($('child2Name'), true); setReq($('child2Dob'), true);
     }
+  }
 
-    // Department: Other vs Designation
-    function updateDepartment() {
-      const val = $('department').value;
-      if (val === 'Other') {
-        show($('otherDeptWrap'));
-        setReq($('otherDepartment'), true);
-        hide($('designationWrap'));
-        setReq($('designation'), false);
-      } else {
-        hide($('otherDeptWrap'));
-        setReq($('otherDepartment'), false);
-        show($('designationWrap'));
-        setReq($('designation'), true);
-      }
+  // Department: Other vs Designation
+  function updateDepartment() {
+    const val = $('department').value;
+    if (val === 'Other') {
+      show($('otherDeptWrap'));
+      setReq($('otherDepartment'), true);
+      hide($('designationWrap'));
+      setReq($('designation'), false);
+    } else {
+      hide($('otherDeptWrap'));
+      setReq($('otherDepartment'), false);
+      show($('designationWrap'));
+      setReq($('designation'), true);
     }
+  }
 
-    // Bank Other
-    function updateBank() {
-      const val = $('bank').value;
-      if (val === 'Other') {
-        show($('otherBankWrap'));
-        setReq($('otherBank'), true);
-      } else {
-        hide($('otherBankWrap'));
-        setReq($('otherBank'), false);
-      }
+  // Bank Other
+  function updateBank() {
+    const val = $('bank').value;
+    if (val === 'Other') {
+      show($('otherBankWrap'));
+      setReq($('otherBank'), true);
+    } else {
+      hide($('otherBankWrap'));
+      setReq($('otherBank'), false);
     }
+  }
 
-    // Experience vs Fresher
-    function updateExpStatus() {
-      const val = $('expStatus').value;
-      if (val === 'Experienced') {
-        show($('expDetails')); hide($('fresherDetails'));
-        // requireds
-        ['prevCompany','prevDesignation','prevBranch','lastWorkingDay'].forEach(id=>setReq($(id), true));
-        setReq($('refBy'), false); hide($('refExtra')); setReq($('refCode'), false); setReq($('refName'), false);
-      } else if (val === 'Fresher') {
-        hide($('expDetails')); show($('fresherDetails'));
-        ['prevCompany','prevDesignation','prevBranch','lastWorkingDay'].forEach(id=>setReq($(id), false));
-        setReq($('refBy'), true);
-      } else {
-        hide($('expDetails')); hide($('fresherDetails'));
-        ['prevCompany','prevDesignation','prevBranch','lastWorkingDay','refBy','refCode','refName'].forEach(id=>setReq($(id), false));
-        hide($('refExtra'));
-      }
+  // Experience vs Fresher
+  function updateExpStatus() {
+    const val = $('expStatus').value;
+    if (val === 'Experienced') {
+      show($('expDetails')); hide($('fresherDetails'));
+      ['prevCompany','prevDesignation','prevBranch','lastWorkingDay'].forEach(id=>setReq($(id), true));
+      setReq($('refBy'), false); hide($('refExtra')); setReq($('refCode'), false); setReq($('refName'), false);
+      show($('relievingWrap')); show($('salarySlipWrap'));
+      setReq($('relievingLetter'), true);
+      setReq($('salarySlips'), true);
+    } else if (val === 'Fresher') {
+      hide($('expDetails')); show($('fresherDetails'));
+      ['prevCompany','prevDesignation','prevBranch','lastWorkingDay'].forEach(id=>setReq($(id), false));
+      setReq($('refBy'), true);
+      hide($('relievingWrap')); hide($('salarySlipWrap'));
+      setReq($('relievingLetter'), false);
+      setReq($('salarySlips'), false);
+    } else {
+      hide($('expDetails')); hide($('fresherDetails'));
+      ['prevCompany','prevDesignation','prevBranch','lastWorkingDay','refBy','refCode','refName'].forEach(id=>setReq($(id), false));
+      hide($('refExtra'));
+      hide($('relievingWrap')); hide($('salarySlipWrap'));
+      setReq($('relievingLetter'), false);
+      setReq($('salarySlips'), false);
     }
-
+  }
     // Referrer extra
     function updateRefBy() {
       const val = $('refBy').value;
