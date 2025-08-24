@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Joining Form</title>
+  <style>
+    :root { --bg:#f5f7fb; --card:#ffffff; --text:#1f2937; --muted:#6b7280; --accent:#2563eb; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 880px; margin: 40px auto; padding: 0 16px; }
+    .card { background: var(--card); border-radius: 14px; padding: 24px; box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    p.lead { margin: 0 0 20px; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+    label { display:block; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; background: #fff;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .full { grid-column: 1 / -1; }
+    .actions { margin-top: 18px; display:flex; gap:10px; }
+    button {
+      appearance: none; border: 0; padding: 12px 16px; border-radius: 10px; cursor: pointer; font-weight: 600;
+    }
+    .primary { background: var(--accent); color:#fff; }
+    .secondary { background: #e5e7eb; color:#111827; }
+    .footer-note { margin-top: 10px; font-size: 12px; color: var(--muted); }
+    @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Employee Joining Form</h1>
+      <p class="lead">Fill in the details below to complete onboarding.</p>
+
+      <form>
+        <div class="grid">
+          <div>
+            <label for="name">Full Name *</label>
+            <input id="name" name="name" type="text" required />
+          </div>
+
+          <div>
+            <label for="email">Email *</label>
+            <input id="email" name="email" type="email" required />
+          </div>
+
+          <div>
+            <label for="phone">Mobile Number</label>
+            <input id="phone" name="phone" type="tel" />
+          </div>
+
+          <div>
+            <label for="doj">Date of Joining *</label>
+            <input id="doj" name="doj" type="date" required />
+          </div>
+
+          <div>
+            <label for="department">Department</label>
+            <select id="department" name="department">
+              <option value="">Select…</option>
+              <option>HR</option>
+              <option>Finance</option>
+              <option>Operations</option>
+              <option>IT</option>
+              <option>Sales</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="designation">Designation</label>
+            <input id="designation" name="designation" type="text" />
+          </div>
+
+          <div class="full">
+            <label for="address">Current Address</label>
+            <textarea id="address" name="address"></textarea>
+          </div>
+
+          <div>
+            <label for="pan">PAN</label>
+            <input id="pan" name="pan" type="text" />
+          </div>
+
+          <div>
+            <label for="aadhaar">Aadhaar (last 4)</label>
+            <input id="aadhaar" name="aadhaar" type="text" maxlength="4" />
+          </div>
+
+          <div class="full">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" placeholder="Any special instructions"></textarea>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" type="submit">Submit</button>
+          <button class="secondary" type="reset">Reset</button>
+        </div>
+
+        <div class="footer-note">* Required fields</div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
