@@ -1,96 +1,96 @@
-<form id="employeeForm" action="https://script.google.com/macros/s/AKfycbywFZAxrCjRMxjEGaJLRHF4m-Bbiu08KpQZKb1ZHtZ5yC8pQ0AYMm1xtZsEE3_eccvV/exec" method="POST" enctype="multipart/form-data" novalidate>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Employee Joining Form</title>
-  <style>
-    :root { --bg:#f6f8fb; --card:#ffffff; --text:#111827; --muted:#6b7280; --accent:#2563eb; --accent-2:#1d4ed8; --border:#e5e7eb; }
-    * { box-sizing: border-box; }
-    body { margin:0; background:var(--bg); color:var(--text); font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
-    .wrap { max-width: 1080px; margin: 32px auto; padding: 0 20px; }
-    h1 { margin:0 0 18px; font-size: 30px; text-align:center; font-weight:800; letter-spacing:.2px; }
-    .sub { text-align:center; color:var(--muted); margin-bottom:22px; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Employee Joining Form</title>
+<style>
+:root { --bg:#f6f8fb; --card:#ffffff; --text:#111827; --muted:#6b7280; --accent:#2563eb; --accent-2:#1d4ed8; --border:#e5e7eb; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+.wrap { max-width: 1080px; margin: 32px auto; padding: 0 20px; }
+h1 { margin:0 0 18px; font-size: 30px; text-align:center; font-weight:800; letter-spacing:.2px; }
+.sub { text-align:center; color:var(--muted); margin-bottom:22px; }
 
-    form { background:var(--card); border:1px solid var(--border); border-radius:16px; padding: 24px; box-shadow: 0 12px 30px rgba(0,0,0,.06); }
+form { background:var(--card); border:1px solid var(--border); border-radius:16px; padding: 24px; box-shadow: 0 12px 30px rgba(0,0,0,.06); }
 
-    .section {
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:18px;
-      margin-bottom:18px;
-      background:#fff;
-    }
-    .section h3 {
-      margin:0 0 14px;
-      font-size:18px; font-weight:800;
-      display:flex; align-items:center; gap:10px;
-    }
-    .badge {
-      background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe;
-      padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700;
-    }
+.section {
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:18px;
+  background:#fff;
+}
+.section h3 {
+  margin:0 0 14px;
+  font-size:18px; font-weight:800;
+  display:flex; align-items:center; gap:10px;
+}
+.badge {
+  background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe;
+  padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700;
+}
 
-    .grid { display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 14px; }
-    .col-12 { grid-column: span 12; }
-    .col-6  { grid-column: span 6; }
-    .col-4  { grid-column: span 4; }
-    .col-3  { grid-column: span 3; }
-    .col-8  { grid-column: span 8; }
+.grid { display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 14px; }
+.col-12 { grid-column: span 12; }
+.col-6  { grid-column: span 6; }
+.col-4  { grid-column: span 4; }
+.col-3  { grid-column: span 3; }
+.col-8  { grid-column: span 8; }
 
-    label { display:block; font-size: 13px; color: var(--muted); margin-bottom:6px; }
-    input, select, textarea {
-      width:100%; padding:11px 12px; border:1px solid var(--border);
-      border-radius:10px; font-size:14px; background:#fff; outline:none;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.12);
-    }
-    input[readonly] { background:#f3f4f6; }
-    .hint { font-size:12px; color:#6b7280; margin-top:6px; }
-    .error { color:#b91c1c; font-size: 13px; margin-top: 6px; }
-    .row { display:flex; gap:10px; }
-    .row > * { flex:1; }
-    .req { color:#ef4444; font-weight:700; margin-left:4px; }
-    .hidden { display:none !important; }
+label { display:block; font-size: 13px; color: var(--muted); margin-bottom:6px; }
+input, select, textarea {
+  width:100%; padding:11px 12px; border:1px solid var(--border);
+  border-radius:10px; font-size:14px; background:#fff; outline:none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+}
+input[readonly] { background:#f3f4f6; }
+.hint { font-size:12px; color:#6b7280; margin-top:6px; }
+.error { color:#b91c1c; font-size: 13px; margin-top: 6px; }
+.row { display:flex; gap:10px; }
+.row > * { flex:1; }
+.req { color:#ef4444; font-weight:700; margin-left:4px; }
+.hidden { display:none !important; }
 
-    .toolbar {
-      display:flex; justify-content: space-between; align-items:center;
-      padding:12px 0 0; gap:12px;
-    }
-    .btn {
-      display:inline-flex; gap:8px; align-items:center; justify-content:center;
-      padding:12px 18px; border:none; border-radius:10px;
-      background:var(--accent); color:#fff; font-weight:700; cursor:pointer;
-    }
-    .btn:hover { background: var(--accent-2); }
-    .note { color:var(--muted); font-size:12px; }
+.toolbar {
+  display:flex; justify-content: space-between; align-items:center;
+  padding:12px 0 0; gap:12px;
+}
+.btn {
+  display:inline-flex; gap:8px; align-items:center; justify-content:center;
+  padding:12px 18px; border:none; border-radius:10px;
+  background:var(--accent); color:#fff; font-weight:700; cursor:pointer;
+}
+.btn:hover { background: var(--accent-2); }
+.note { color:var(--muted); font-size:12px; }
 
-    @media (max-width: 980px) {
-      .col-6, .col-4, .col-3, .col-8 { grid-column: span 12; }
-    }
-  </style>
+@media (max-width: 980px) {
+  .col-6, .col-4, .col-3, .col-8 { grid-column: span 12; }
+}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Employee Joining Form</h1>
-    <div class="sub">Please fill all required fields marked with <span class="req">*</span></div>
+<div class="wrap">
+<h1>Employee Joining Form</h1>
+<div class="sub">Please fill all required fields marked with <span class="req">*</span></div>
 
-    <form id="employeeForm" novalidate>
+<form id="employeeForm" action="https://script.google.com/macros/s/AKfycbwcTbHGb9gTSW81Nq25Ad7lUG32TznDQdAay59w0N26Vi5ls8wKet987Qw_1I3-sDga/exec" method="POST" enctype="multipart/form-data" novalidate>
+
       <!-- ================= Personal Details ================= -->
       <div class="section">
         <h3>Personal Details <span class="badge">Section 1</span></h3>
         <div class="grid">
           <div class="col-12">
             <label for="fullName">Full Name <span class="req">*</span></label>
-            <input id="fullName" name="fullName" type="text" required pattern="[A-Za-z ]+" placeholder="e.g., Rahul Kumar Sharma">
+            <input id="fullName" name="fullName" type="text" required pattern="[A-Za-z ]+" placeholder="e.g., Full Name">
             <div class="hint">Alphabets and spaces only.</div>
           </div>
 
           <div class="col-12">
             <label for="fatherName">Father's Name <span class="req">*</span></label>
-            <input id="fatherName" name="fatherName" type="text" required pattern="[A-Za-z ]+" placeholder="e.g., Mohan Lal Sharma">
+            <input id="fatherName" name="fatherName" type="text" required pattern="[A-Za-z ]+" placeholder="e.g., Father's Name">
           </div>
 
           <div class="col-4">
