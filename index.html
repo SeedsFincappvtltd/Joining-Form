@@ -76,7 +76,7 @@ input[readonly] { background:#f3f4f6; }
   <h1>Employee Joining Form</h1>
 <div class="sub">Please fill all required fields marked with <span class="req">*</span></div>
 
-<form id="employeeForm" action="https://script.google.com/macros/s/AKfycby12lsmI947wWjV7fgMU30uuoXebq-bOcBN97INBJ64Da64WA7tpJRoAb42jFSC6hef/exec" method="POST" enctype="multipart/form-data" novalidate>
+<form id="employeeForm" action="https://script.google.com/macros/s/AKfycbzc2BmiZxuknJ7H-brNxk9w9ouLPS3hhJESZa-6NxQyFwdAxjeRAQ_sqX62aTf1jXld/exec" method="POST" enctype="multipart/form-data" novalidate>
 
       <!-- ================= Personal Details ================= -->
       <div class="section">
@@ -915,11 +915,31 @@ $('clearSign').addEventListener('click', () => {
   ctx.clearRect(0,0,canvas.width,canvas.height);
   $('signatureData').value = '';
 });
-// Save signature on submit
-$('employeeForm').addEventListener('submit', (e) => {
-  // Save as dataURL
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ----------------------------
+// Form Submit Handler
+// ----------------------------
+$('employeeForm').addEventListener('submit', async (e) => {
+  checkAccountMatch();
+  checkEmergencyDifferent();
+
+  const form = e.target;
+  if (!form.checkValidity()) {
+    e.preventDefault();
+    form.reportValidity();
+    return;
+  }
+
+  // ✅ Signature check
   const data = canvas.toDataURL();
-  // Detect if blank
   function isBlank(cnv, durl) {
     const blank = document.createElement('canvas');
     blank.width = cnv.width;
@@ -930,15 +950,73 @@ $('employeeForm').addEventListener('submit', (e) => {
     e.preventDefault();
     show($('signError'));
     $('signatureData').setCustomValidity('Please sign in the signature box.');
-    $('employeeForm').reportValidity();
-    return false;
+    form.reportValidity();
+    return;
   } else {
     hide($('signError'));
     $('signatureData').value = data;
     $('signatureData').setCustomValidity('');
   }
-});
 
-  </script>
+  e.preventDefault(); // stop default submit
+
+  // ✅ Build payload
+  const formData = new FormData(form);
+  const payload = {};
+
+  // Handle single file uploads
+  async function addSingle(name) {
+    if (formData.get(name)?.name) {
+      payload[name] = await fileToBase64(formData.get(name));
+    }
+  }
+  await addSingle("resume");
+  await addSingle("photo");
+  await addSingle("panUpload");
+
+  // Handle multiple file uploads
+  async function addMultiFiles(name) {
+    const files = formData.getAll(name);
+    if (files.length && files[0].name) {
+      payload[name] = await Promise.all(files.map(f => fileToBase64(f)));
+    }
+  }
+  await addMultiFiles("aadhaarUpload[]");
+  await addMultiFiles("dlUpload[]");
+  await addMultiFiles("familyPhoto[]");
+  await addMultiFiles("fatherAadhaar[]");
+  await addMultiFiles("motherAadhaar[]");
+  await addMultiFiles("spouseAadhaar[]");
+  await addMultiFiles("childrenAadhaar[]");
+  await addMultiFiles("educationCert[]");
+  await addMultiFiles("relievingLetter[]");
+  await addMultiFiles("salarySlips[]");
+
+  // Add all text inputs
+  formData.forEach((val, key) => {
+    if (!(key in payload)) payload[key] = val;
+  });
+
+  // Add signature
+  payload.signatureData = $('signatureData').value;
+
+  // 🚀 Submit to Apps Script Web App
+  fetch(form.action, {
+    method: "POST",
+    body: new URLSearchParams(payload)
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.status === "success") {
+        alert("Form submitted successfully!");
+        form.reset();
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // reset signature
+      } else {
+        alert("Error: " + data.message);
+      }
+    })
+    .catch(err => alert("Error submitting form: " + err));
+});
+</script>
 </body>
 </html>
