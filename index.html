@@ -73,7 +73,7 @@ input[readonly] { background:#f3f4f6; }
 </head>
 <body>
 <div class="wrap">
-<h1>Employee Joining Form</h1>
+  <h1>Employee Joining Form</h1>
 <div class="sub">Please fill all required fields marked with <span class="req">*</span></div>
 
 <form id="employeeForm" action="https://script.google.com/macros/s/AKfycby12lsmI947wWjV7fgMU30uuoXebq-bOcBN97INBJ64Da64WA7tpJRoAb42jFSC6hef/exec" method="POST" enctype="multipart/form-data" novalidate>
@@ -561,6 +561,19 @@ input[readonly] { background:#f3f4f6; }
 <div class="section">
   <h3>Documents Upload <span class="badge">Section 10</span></h3>
   <div class="grid">
+  <div class="col-12">
+   <label for="signatureBox">Signature Box <span class="req">*</span></label>
+   <div style="border: 1px solid #e5e7eb; background: #fff; border-radius: 10px; padding: 8px;">
+    <canvas id="signatureBox" width="400" height="120" style="border-radius:8px; border:1px solid #c7d2fe; background:#f3f4f6; width:100%; max-width:400px; touch-action: none;"></canvas>
+    <div class="row" style="margin-top:6px;">
+      <button type="button" id="clearSign" class="btn" style="padding:6px 12px; font-size:13px;">Clear</button>
+    </div>
+    <small class="hint">Sign using mouse or touch. Your signature will be saved.</small>
+  </div>
+  <input type="hidden" id="signatureData" name="signatureData" required>
+  <div id="signError" class="error hidden">Signature is required.</div>
+</div>
+
     <div class="col-6">
       <label for="resume">Resume <span class="req">*</span></label>
       <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx" required>
@@ -589,11 +602,6 @@ input[readonly] { background:#f3f4f6; }
     <div class="col-6">
       <label for="familyPhoto">Family Photo (For ESIC) (Multiple Upload) <span class="req">*</span></label>
       <input id="familyPhoto" name="familyPhoto[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple required>
-    </div>
-
-    <div class="col-6">
-      <label for="signature">Signature <span class="req">*</span></label>
-      <input id="signature" name="signature" type="file" accept=".pdf,.jpg,.jpeg,.png" required>
     </div>
 
     <div class="col-6">
@@ -869,6 +877,68 @@ input[readonly] { background:#f3f4f6; }
     updateBank();
     updateExpStatus();
     updateRefBy();
+// Signature box implementation
+const canvas = $('signatureBox');
+const ctx = canvas.getContext('2d');
+let drawing = false;
+function startDraw(e) {
+  drawing = true;
+  ctx.beginPath();
+  let rect = canvas.getBoundingClientRect();
+  let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  ctx.moveTo(x, y);
+}
+function draw(e) {
+  if (!drawing) return;
+  let rect = canvas.getBoundingClientRect();
+  let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  ctx.lineTo(x, y);
+  ctx.strokeStyle = "#1d4ed8";
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+  ctx.stroke();
+}
+function endDraw() { drawing = false; }
+// Mouse events
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', endDraw);
+canvas.addEventListener('mouseleave', endDraw);
+// Touch events
+canvas.addEventListener('touchstart', startDraw);
+canvas.addEventListener('touchmove', draw);
+canvas.addEventListener('touchend', endDraw);
+// Clear button
+$('clearSign').addEventListener('click', () => {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  $('signatureData').value = '';
+});
+// Save signature on submit
+$('employeeForm').addEventListener('submit', (e) => {
+  // Save as dataURL
+  const data = canvas.toDataURL();
+  // Detect if blank
+  function isBlank(cnv, durl) {
+    const blank = document.createElement('canvas');
+    blank.width = cnv.width;
+    blank.height = cnv.height;
+    return blank.toDataURL() === durl;
+  }
+  if (isBlank(canvas, data)) {
+    e.preventDefault();
+    show($('signError'));
+    $('signatureData').setCustomValidity('Please sign in the signature box.');
+    $('employeeForm').reportValidity();
+    return false;
+  } else {
+    hide($('signError'));
+    $('signatureData').value = data;
+    $('signatureData').setCustomValidity('');
+  }
+});
+
   </script>
 </body>
 </html>
