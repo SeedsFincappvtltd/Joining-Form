@@ -5,6 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Employee Joining Form</title>
 <style>
+  #loaderOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: none; /* hidden by default */
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+.loader {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 :root { --bg:#f6f8fb; --card:#ffffff; --text:#111827; --muted:#6b7280; --accent:#2563eb; --accent-2:#1d4ed8; --border:#e5e7eb; }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
@@ -104,6 +130,7 @@ input[readonly] { background:#f3f4f6; }
           <div class="col-4">
             <label for="dob">Date of Birth <span class="req">*</span></label>
             <input id="dob" name="dob" type="date" required>
+            <span id="ageDisplay" class="highlight"></span>
           </div>
 
           <div class="col-4">
@@ -647,49 +674,76 @@ input[readonly] { background:#f3f4f6; }
   <button type="submit" class="btn">Submit</button>
 </div>
 
-  <script>
-    // ---------- Helpers ----------
-    const $ = (id) => document.getElementById(id);
-    const show = (el) => el.classList.remove('hidden');
-    const hide = (el) => el.classList.add('hidden');
-    const setReq = (el, req) => { if (!el) return; el.required = !!req; };
+<script>
+  // ---------- Helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const show = (el) => el.classList.remove('hidden');
+  const hide = (el) => el.classList.add('hidden');
+  const setReq = (el, req) => { if (!el) return; el.required = !!req; };
 
-    // Uppercase PAN + IFSC automatically
-    $('pan').addEventListener('input', () => { $('pan').value = $('pan').value.toUpperCase(); });
-    $('ifsc').addEventListener('input', () => { $('ifsc').value = $('ifsc').value.toUpperCase(); });
+  // ---------- Loader functions ----------
+  function showLoader() {
+    $('loaderOverlay').style.display = 'flex';
+  }
+  function hideLoader() {
+    $('loaderOverlay').style.display = 'none';
+  }
 
-    // Numeric-only enforcement for some fields
-    ['mobile','aadhaar','permPincode','currPincode','uan','emgNum1','emgNum2','accountNumber','confirmAccountNumber']
-      .forEach(id => $(id).addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^0-9]/g,''); }));
-
-    // DoJ within last 2 days (and not future)
-    function setDojWindow() {
-      const today = new Date();
-      const max = today.toISOString().split('T')[0];
-      const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
-      const min = minDate.toISOString().split('T')[0];
-      const doj = $('doj');
-      doj.min = min;
-      doj.max = max;
-      doj.addEventListener('input', () => {
-        doj.setCustomValidity('');
-        if (doj.value && (doj.value < min || doj.value > max)) {
-          doj.setCustomValidity('Date of Joining must be today or within last 2 days.');
-        }
-      });
+  // ---------- Age calculation ----------
+  function calculateAge() {
+    const dob = $('dob').value;
+    if (!dob) {
+      $('ageDisplay').textContent = '';
+      return;
     }
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+    $('ageDisplay').textContent = age >= 0 ? `Age: ${age} years` : '';
+  }
+  $('dob').addEventListener('change', calculateAge);
 
-    // Marital toggling (Parents are ALWAYS required; Spouse section only when Married)
-   function updateMarital() {
+  // ---------- Uppercase PAN + IFSC ----------
+  $('pan').addEventListener('input', () => { $('pan').value = $('pan').value.toUpperCase(); });
+  $('ifsc').addEventListener('input', () => { $('ifsc').value = $('ifsc').value.toUpperCase(); });
+
+  // ---------- Numeric-only enforcement ----------
+  ['mobile','aadhaar','permPincode','currPincode','uan','emgNum1','emgNum2','accountNumber','confirmAccountNumber']
+    .forEach(id => $(id).addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g,''); 
+    }));
+
+  // ---------- Date of Joining ----------
+  function setDojWindow() {
+    const today = new Date();
+    const max = today.toISOString().split('T')[0];
+    const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
+    const min = minDate.toISOString().split('T')[0];
+    const doj = $('doj');
+    doj.min = min;
+    doj.max = max;
+    doj.addEventListener('input', () => {
+      doj.setCustomValidity('');
+      if (doj.value && (doj.value < min || doj.value > max)) {
+        doj.setCustomValidity('Date of Joining must be today or within last 2 days.');
+      }
+    });
+  }
+  setDojWindow();
+
+  // ---------- Marital and Children toggling ----------
+  function updateMarital() {
     const val = $('maritalStatus').value;
     if (val === 'Married') {
       show($('spouseSection'));
-      show($('spouseAadhaarUpload'));   // show spouse Aadhaar upload
+      show($('spouseAadhaarUpload'));
       setReq($('spouseName'), true);
       setReq($('spouseDob'), true);
       setReq($('marriageDate'), true);
       setReq($('hasChildren'), true);
-      setReq($('spouseAadhaar'), true); // Aadhaar upload required
+      setReq($('spouseAadhaar'), true);
     } else {
       hide($('spouseSection'));
       hide($('spouseAadhaarUpload'));
@@ -698,7 +752,6 @@ input[readonly] { background:#f3f4f6; }
       setReq($('marriageDate'), false);
       setReq($('hasChildren'), false);
       setReq($('spouseAadhaar'), false);
-
       hide($('childrenBlock'));
       hide($('childrenAadhaarUpload'));
       setReq($('childrenCount'), false);
@@ -709,12 +762,12 @@ input[readonly] { background:#f3f4f6; }
     setReq($('motherName'), true);
     setReq($('motherDob'), true);
   }
-  // Children toggling
+
   function updateHasChildren() {
     const val = $('hasChildren').value;
     if (val === 'Yes') {
       show($('childrenBlock'));
-      show($('childrenAadhaarUpload')); // Aadhaar upload section for children
+      show($('childrenAadhaarUpload'));
       setReq($('childrenCount'), true);
       setReq($('childrenAadhaar'), true);
     } else {
@@ -730,7 +783,6 @@ input[readonly] { background:#f3f4f6; }
     hide($('child1')); hide($('child2'));
     setReq($('child1Name'), false); setReq($('child1Dob'), false);
     setReq($('child2Name'), false); setReq($('child2Dob'), false);
-
     if (val === '1') {
       show($('child1'));
       setReq($('child1Name'), true); setReq($('child1Dob'), true);
@@ -741,7 +793,7 @@ input[readonly] { background:#f3f4f6; }
     }
   }
 
-  // Department: Other vs Designation
+  // ---------- Department & Bank toggling ----------
   function updateDepartment() {
     const val = $('department').value;
     if (val === 'Other') {
@@ -757,7 +809,6 @@ input[readonly] { background:#f3f4f6; }
     }
   }
 
-  // Bank Other
   function updateBank() {
     const val = $('bank').value;
     if (val === 'Other') {
@@ -769,7 +820,7 @@ input[readonly] { background:#f3f4f6; }
     }
   }
 
-  // Experience vs Fresher
+  // ---------- Experience vs Fresher ----------
   function updateExpStatus() {
     const val = $('expStatus').value;
     if (val === 'Experienced') {
@@ -795,228 +846,229 @@ input[readonly] { background:#f3f4f6; }
       setReq($('salarySlips'), false);
     }
   }
-    // Referrer extra
-    function updateRefBy() {
-      const val = $('refBy').value;
-      if (val === 'Seeds Employee reference') {
-        show($('refExtra'));
-        setReq($('refCode'), true);
-        setReq($('refName'), true);
-      } else {
-        hide($('refExtra'));
-        setReq($('refCode'), false);
-        setReq($('refName'), false);
-      }
-    }
 
-    // Same address copy
-    $('sameAddress').addEventListener('change', (e) => {
-      if (e.target.checked) {
-        $('currAddress').value = $('permAddress').value;
-        $('currCity').value = $('permCity').value;
-        $('currState').value = $('permState').value;
-        $('currPincode').value = $('permPincode').value;
-      }
-    });
-
-    // Account number match
-    function checkAccountMatch() {
-      const a = $('accountNumber').value.trim();
-      const b = $('confirmAccountNumber').value.trim();
-      if (a && b && a !== b) {
-        show($('acctErr'));
-        $('confirmAccountNumber').setCustomValidity('Account numbers do not match.');
-      } else {
-        hide($('acctErr'));
-        $('confirmAccountNumber').setCustomValidity('');
-      }
-    }
-    $('accountNumber').addEventListener('input', checkAccountMatch);
-    $('confirmAccountNumber').addEventListener('input', checkAccountMatch);
-
-    // Emergency numbers must differ from mobile
-    function checkEmergencyDifferent() {
-      const m = $('mobile').value;
-      const e1 = $('emgNum1').value;
-      const e2 = $('emgNum2').value;
-      if (m && e1 && m === e1) { show($('emg1Err')); $('emgNum1').setCustomValidity('Must be different from mobile'); }
-      else { hide($('emg1Err')); $('emgNum1').setCustomValidity(''); }
-      if (m && e2 && m === e2) { show($('emg2Err')); $('emgNum2').setCustomValidity('Must be different from mobile'); }
-      else { hide($('emg2Err')); $('emgNum2').setCustomValidity(''); }
-    }
-    $('mobile').addEventListener('input', checkEmergencyDifferent);
-    $('emgNum1').addEventListener('input', checkEmergencyDifferent);
-    $('emgNum2').addEventListener('input', checkEmergencyDifferent);
-
-    // Listeners for dynamic sections
-    $('maritalStatus').addEventListener('change', updateMarital);
-    $('hasChildren').addEventListener('change', updateHasChildren);
-    $('childrenCount').addEventListener('change', () => toggleChildrenCount());
-    $('department').addEventListener('change', updateDepartment);
-    $('bank').addEventListener('change', updateBank);
-    $('expStatus').addEventListener('change', updateExpStatus);
-    $('refBy').addEventListener('change', updateRefBy);
-
-    // Submission: rely on HTML5 validation + our custom messages
-    $('employeeForm').addEventListener('submit', (e) => {
-      checkAccountMatch();
-      checkEmergencyDifferent();
-      const form = e.target;
-      if (!form.checkValidity()) {
-        e.preventDefault();
-        form.reportValidity();
-      }
-    });
-
-    // Init on load
-    setDojWindow();
-    updateMarital();          // sets spouse visibility & parents reqs
-    updateHasChildren();
-    toggleChildrenCount('0');
-    updateDepartment();
-    updateBank();
-    updateExpStatus();
-    updateRefBy();
-// Signature box implementation
-const canvas = $('signatureBox');
-const ctx = canvas.getContext('2d');
-let drawing = false;
-function startDraw(e) {
-  drawing = true;
-  ctx.beginPath();
-  let rect = canvas.getBoundingClientRect();
-  let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-  ctx.moveTo(x, y);
-}
-function draw(e) {
-  if (!drawing) return;
-  let rect = canvas.getBoundingClientRect();
-  let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-  ctx.lineTo(x, y);
-  ctx.strokeStyle = "#1d4ed8";
-  ctx.lineWidth = 2;
-  ctx.lineCap = "round";
-  ctx.stroke();
-}
-function endDraw() { drawing = false; }
-// Mouse events
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mouseup', endDraw);
-canvas.addEventListener('mouseleave', endDraw);
-// Touch events
-canvas.addEventListener('touchstart', startDraw);
-canvas.addEventListener('touchmove', draw);
-canvas.addEventListener('touchend', endDraw);
-// Clear button
-$('clearSign').addEventListener('click', () => {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  $('signatureData').value = '';
-});
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-// ----------------------------
-// Form Submit Handler
-// ----------------------------
-$('employeeForm').addEventListener('submit', async (e) => {
-  checkAccountMatch();
-  checkEmergencyDifferent();
-
-  const form = e.target;
-  if (!form.checkValidity()) {
-    e.preventDefault();
-    form.reportValidity();
-    return;
-  }
-
-  // ✅ Signature check
-  const data = canvas.toDataURL();
-  function isBlank(cnv, durl) {
-    const blank = document.createElement('canvas');
-    blank.width = cnv.width;
-    blank.height = cnv.height;
-    return blank.toDataURL() === durl;
-  }
-  if (isBlank(canvas, data)) {
-    e.preventDefault();
-    show($('signError'));
-    $('signatureData').setCustomValidity('Please sign in the signature box.');
-    form.reportValidity();
-    return;
-  } else {
-    hide($('signError'));
-    $('signatureData').value = data;
-    $('signatureData').setCustomValidity('');
-  }
-
-  e.preventDefault(); // stop default submit
-
-  // ✅ Build payload
-  const formData = new FormData(form);
-  const payload = {};
-
-  // Handle single file uploads
-  async function addSingle(name) {
-    if (formData.get(name)?.name) {
-      payload[name] = await fileToBase64(formData.get(name));
+  function updateRefBy() {
+    const val = $('refBy').value;
+    if (val === 'Seeds Employee reference') {
+      show($('refExtra'));
+      setReq($('refCode'), true);
+      setReq($('refName'), true);
+    } else {
+      hide($('refExtra'));
+      setReq($('refCode'), false);
+      setReq($('refName'), false);
     }
   }
-  await addSingle("resume");
-  await addSingle("photo");
-  await addSingle("panUpload");
 
-  // Handle multiple file uploads
-  async function addMultiFiles(name) {
-    const files = formData.getAll(name);
-    if (files.length && files[0].name) {
-      payload[name] = await Promise.all(files.map(f => fileToBase64(f)));
+  // ---------- Same address copy ----------
+  $('sameAddress').addEventListener('change', (e) => {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+      $('currAddress').value = $('permAddress').value;
+      $('currCity').value = $('permCity').value;
+      $('currState').value = $('permState').value;
+      $('currPincode').value = $('permPincode').value;
+      $('currAddress').readOnly = true;
+      $('currCity').readOnly = true;
+      $('currState').readOnly = true;
+      $('currPincode').readOnly = true;
+    } else {
+      $('currAddress').value = '';
+      $('currCity').value = '';
+      $('currState').value = '';
+      $('currPincode').value = '';
+      $('currAddress').readOnly = false;
+      $('currCity').readOnly = false;
+      $('currState').readOnly = false;
+      $('currPincode').readOnly = false;
     }
-  }
-  await addMultiFiles("aadhaarUpload[]");
-  await addMultiFiles("dlUpload[]");
-  await addMultiFiles("familyPhoto[]");
-  await addMultiFiles("fatherAadhaar[]");
-  await addMultiFiles("motherAadhaar[]");
-  await addMultiFiles("spouseAadhaar[]");
-  await addMultiFiles("childrenAadhaar[]");
-  await addMultiFiles("educationCert[]");
-  await addMultiFiles("relievingLetter[]");
-  await addMultiFiles("salarySlips[]");
-
-  // Add all text inputs
-  formData.forEach((val, key) => {
-    if (!(key in payload)) payload[key] = val;
   });
 
-  // Add signature
-  payload.signatureData = $('signatureData').value;
+  // ---------- Account match ----------
+  function checkAccountMatch() {
+    const a = $('accountNumber').value.trim();
+    const b = $('confirmAccountNumber').value.trim();
+    if (a && b && a !== b) {
+      show($('acctErr'));
+      $('confirmAccountNumber').setCustomValidity('Account numbers do not match.');
+    } else {
+      hide($('acctErr'));
+      $('confirmAccountNumber').setCustomValidity('');
+    }
+  }
+  $('accountNumber').addEventListener('input', checkAccountMatch);
+  $('confirmAccountNumber').addEventListener('input', checkAccountMatch);
 
-  // 🚀 Submit to Apps Script Web App
-  fetch(form.action, {
-    method: "POST",
-    body: new URLSearchParams(payload)
-  })
+  // ---------- Emergency numbers ----------
+  function checkEmergencyDifferent() {
+    const m = $('mobile').value;
+    const e1 = $('emgNum1').value;
+    const e2 = $('emgNum2').value;
+    if (m && e1 && m === e1) { show($('emg1Err')); $('emgNum1').setCustomValidity('Must be different from mobile'); }
+    else { hide($('emg1Err')); $('emgNum1').setCustomValidity(''); }
+    if (m && e2 && m === e2) { show($('emg2Err')); $('emgNum2').setCustomValidity('Must be different from mobile'); }
+    else { hide($('emg2Err')); $('emgNum2').setCustomValidity(''); }
+  }
+  $('mobile').addEventListener('input', checkEmergencyDifferent);
+  $('emgNum1').addEventListener('input', checkEmergencyDifferent);
+  $('emgNum2').addEventListener('input', checkEmergencyDifferent);
+
+  // ---------- Listeners ----------
+  $('maritalStatus').addEventListener('change', updateMarital);
+  $('hasChildren').addEventListener('change', updateHasChildren);
+  $('childrenCount').addEventListener('change', () => toggleChildrenCount());
+  $('department').addEventListener('change', updateDepartment);
+  $('bank').addEventListener('change', updateBank);
+  $('expStatus').addEventListener('change', updateExpStatus);
+  $('refBy').addEventListener('change', updateRefBy);
+
+  // ---------- Signature box ----------
+  const canvas = $('signatureBox');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  function startDraw(e) {
+    drawing = true;
+    ctx.beginPath();
+    let rect = canvas.getBoundingClientRect();
+    let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    ctx.moveTo(x, y);
+  }
+  function draw(e) {
+    if (!drawing) return;
+    let rect = canvas.getBoundingClientRect();
+    let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = "#1d4ed8";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.stroke();
+  }
+  function endDraw() { drawing = false; }
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw);
+  canvas.addEventListener('touchmove', draw);
+  canvas.addEventListener('touchend', endDraw);
+  $('clearSign').addEventListener('click', () => {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    $('signatureData').value = '';
+  });
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ---------- Form submit ----------
+  $('employeeForm').addEventListener('submit', async (e) => {
+    checkAccountMatch();
+    checkEmergencyDifferent();
+    const form = e.target;
+
+    if (!form.checkValidity()) {
+      e.preventDefault();
+      form.reportValidity();
+      return;
+    }
+
+    // Signature check
+    const data = canvas.toDataURL();
+    function isBlank(cnv, durl) {
+      const blank = document.createElement('canvas');
+      blank.width = cnv.width;
+      blank.height = cnv.height;
+      return blank.toDataURL() === durl;
+    }
+    if (isBlank(canvas, data)) {
+      e.preventDefault();
+      show($('signError'));
+      $('signatureData').setCustomValidity('Please sign in the signature box.');
+      form.reportValidity();
+      return;
+    } else {
+      hide($('signError'));
+      $('signatureData').value = data;
+      $('signatureData').setCustomValidity('');
+    }
+
+    e.preventDefault();
+
+    // ✅ Show loader
+    showLoader();
+
+    // Build payload
+    const formData = new FormData(form);
+    const payload = {};
+
+    async function addSingle(name) {
+      if (formData.get(name)?.name) payload[name] = await fileToBase64(formData.get(name));
+    }
+    await addSingle("resume");
+    await addSingle("photo");
+    await addSingle("panUpload");
+
+    async function addMultiFiles(name) {
+      const files = formData.getAll(name);
+      if (files.length && files[0].name) {
+        payload[name] = await Promise.all(files.map(f => fileToBase64(f)));
+      }
+    }
+    await addMultiFiles("aadhaarUpload[]");
+    await addMultiFiles("dlUpload[]");
+    await addMultiFiles("familyPhoto[]");
+    await addMultiFiles("fatherAadhaar[]");
+    await addMultiFiles("motherAadhaar[]");
+    await addMultiFiles("spouseAadhaar[]");
+    await addMultiFiles("childrenAadhaar[]");
+    await addMultiFiles("educationCert[]");
+    await addMultiFiles("relievingLetter[]");
+    await addMultiFiles("salarySlips[]");
+
+    formData.forEach((val, key) => { if (!(key in payload)) payload[key] = val; });
+    payload.signatureData = $('signatureData').value;
+
+    fetch(form.action, {
+      method: "POST",
+      body: new URLSearchParams(payload)
+    })
     .then(r => r.json())
     .then(data => {
+      hideLoader();
       if (data.status === "success") {
         alert("Form submitted successfully!");
         form.reset();
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // reset signature
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       } else {
         alert("Error: " + data.message);
       }
     })
-    .catch(err => alert("Error submitting form: " + err));
-});
+    .catch(err => {
+      hideLoader();
+      alert("Error submitting form: " + err);
+    });
+  });
+
+  // ---------- Init ----------
+  setDojWindow();
+  updateMarital();
+  updateHasChildren();
+  toggleChildrenCount('0');
+  updateDepartment();
+  updateBank();
+  updateExpStatus();
+  updateRefBy();
 </script>
+<div id="loaderOverlay">
+  <div class="loader"></div>
+  <p>Please wait... Submitting your form</p>
+</div>
 </body>
 </html>
