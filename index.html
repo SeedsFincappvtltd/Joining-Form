@@ -5,100 +5,117 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Employee Joining Form</title>
 <style>
+  /* ---------- Loader Styles ---------- */
   #loaderOverlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: none; /* hidden by default */
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  z-index: 9999;
-}
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999;
+  }
+  .loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-.loader {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #3498db;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 12px;
-}
+  /* ---------- Root Colors & Body ---------- */
+  :root { 
+    --bg:#f6f8fb; --card:#ffffff; --text:#111827; --muted:#6b7280; 
+    --accent:#2563eb; --accent-2:#1d4ed8; --border:#e5e7eb; 
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+  /* ---------- Wrapper ---------- */
+  .wrap { max-width: 1080px; margin: 32px auto; padding: 0 20px; }
 
-:root { --bg:#f6f8fb; --card:#ffffff; --text:#111827; --muted:#6b7280; --accent:#2563eb; --accent-2:#1d4ed8; --border:#e5e7eb; }
-* { box-sizing: border-box; }
-body { margin:0; background:var(--bg); color:var(--text); font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
-.wrap { max-width: 1080px; margin: 32px auto; padding: 0 20px; }
-h1 { margin:0 0 18px; font-size: 30px; text-align:center; font-weight:800; letter-spacing:.2px; }
-.sub { text-align:center; color:var(--muted); margin-bottom:22px; }
+  /* ---------- Headings ---------- */
+  h1 { margin:0 0 18px; font-size: 30px; text-align:center; font-weight:800; letter-spacing:.2px; }
+  .sub { text-align:center; color:var(--muted); margin-bottom:22px; }
 
-form { background:var(--card); border:1px solid var(--border); border-radius:16px; padding: 24px; box-shadow: 0 12px 30px rgba(0,0,0,.06); }
+  /* ---------- Logo ---------- */
+  .logo {
+    display: block;
+    margin: 0 auto 20px auto; /* center horizontally + spacing below */
+    max-width: 300px;
+    height: auto;
+  }
 
-.section {
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:18px;
-  margin-bottom:18px;
-  background:#fff;
-}
-.section h3 {
-  margin:0 0 14px;
-  font-size:18px; font-weight:800;
-  display:flex; align-items:center; gap:10px;
-}
-.badge {
-  background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe;
-  padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700;
-}
+  /* ---------- Form ---------- */
+  form { background:var(--card); border:1px solid var(--border); border-radius:16px; padding: 24px; box-shadow: 0 12px 30px rgba(0,0,0,.06); }
+  .section {
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:18px;
+    background:#fff;
+  }
+  .section h3 {
+    margin:0 0 14px;
+    font-size:18px; font-weight:800;
+    display:flex; align-items:center; gap:10px;
+  }
+  .badge {
+    background:#eef2ff; color:#4338ca; border:1px solid #c7d2fe;
+    padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700;
+  }
 
-.grid { display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 14px; }
-.col-12 { grid-column: span 12; }
-.col-6  { grid-column: span 6; }
-.col-4  { grid-column: span 4; }
-.col-3  { grid-column: span 3; }
-.col-8  { grid-column: span 8; }
+  .grid { display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 14px; }
+  .col-12 { grid-column: span 12; }
+  .col-6  { grid-column: span 6; }
+  .col-4  { grid-column: span 4; }
+  .col-3  { grid-column: span 3; }
+  .col-8  { grid-column: span 8; }
 
-label { display:block; font-size: 13px; color: var(--muted); margin-bottom:6px; }
-input, select, textarea {
-  width:100%; padding:11px 12px; border:1px solid var(--border);
-  border-radius:10px; font-size:14px; background:#fff; outline:none;
-}
-input:focus, select:focus, textarea:focus {
-  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.12);
-}
-input[readonly] { background:#f3f4f6; }
-.hint { font-size:12px; color:#6b7280; margin-top:6px; }
-.error { color:#b91c1c; font-size: 13px; margin-top: 6px; }
-.row { display:flex; gap:10px; }
-.row > * { flex:1; }
-.req { color:#ef4444; font-weight:700; margin-left:4px; }
-.hidden { display:none !important; }
+  label { display:block; font-size: 13px; color: var(--muted); margin-bottom:6px; }
+  input, select, textarea {
+    width:100%; padding:11px 12px; border:1px solid var(--border);
+    border-radius:10px; font-size:14px; background:#fff; outline:none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+  }
+  input[readonly] { background:#f3f4f6; }
+  .hint { font-size:12px; color:#6b7280; margin-top:6px; }
+  .error { color:#b91c1c; font-size: 13px; margin-top: 6px; }
+  .row { display:flex; gap:10px; }
+  .row > * { flex:1; }
+  .req { color:#ef4444; font-weight:700; margin-left:4px; }
+  .hidden { display:none !important; }
 
-.toolbar {
-  display:flex; justify-content: space-between; align-items:center;
-  padding:12px 0 0; gap:12px;
-}
-.btn {
-  display:inline-flex; gap:8px; align-items:center; justify-content:center;
-  padding:12px 18px; border:none; border-radius:10px;
-  background:var(--accent); color:#fff; font-weight:700; cursor:pointer;
-}
-.btn:hover { background: var(--accent-2); }
-.note { color:var(--muted); font-size:12px; }
+  .toolbar {
+    display:flex; justify-content: space-between; align-items:center;
+    padding:12px 0 0; gap:12px;
+  }
+  .btn {
+    display:inline-flex; gap:8px; align-items:center; justify-content:center;
+    padding:12px 18px; border:none; border-radius:10px;
+    background:var(--accent); color:#fff; font-weight:700; cursor:pointer;
+  }
+  .btn:hover { background: var(--accent-2); }
+  .note { color:var(--muted); font-size:12px; }
 
-@media (max-width: 980px) {
-  .col-6, .col-4, .col-3, .col-8 { grid-column: span 12; }
-}
+  @media (max-width: 980px) {
+    .col-6, .col-4, .col-3, .col-8 { grid-column: span 12; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <!-- Company Logo -->
+  <img src="https://raw.githubusercontent.com/SeedsFincappvtltd/Joining-Form/main/Company%20Logo.png" 
+       alt="Company Logo" class="logo">
+
   <h1>Employee Joining Form</h1>
 <div class="sub">Please fill all required fields marked with <span class="req">*</span></div>
 
@@ -147,7 +164,7 @@ input[readonly] { background:#f3f4f6; }
 
           <div class="col-6">
             <label for="mobile">Mobile Number <span class="req">*</span></label>
-            <input id="mobile" name="mobile" type="text" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" required placeholder="10 digits">
+            <input id="mobile" name="mobile" type="text" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" required placeholder="10 digits">
           </div>
 
           <div class="col-6">
@@ -238,22 +255,93 @@ input[readonly] { background:#f3f4f6; }
 
       <!-- ================= Parents (Always required) ================= -->
       <div id="parentsSection" class="section">
-        <h3>Parents' Details <span class="badge">Section 3</span></h3>
-        <div class="grid">
-          <div class="col-4">
-            <label for="fatherDob">Father's DOB <span class="req">*</span></label>
-            <input id="fatherDob" name="fatherDob" type="date" required>
-          </div>
-          <div class="col-4">
-            <label for="motherName">Mother's Name <span class="req">*</span></label>
-            <input id="motherName" name="motherName" type="text" pattern="[A-Za-z ]+" required>
-          </div>
-          <div class="col-4">
-            <label for="motherDob">Mother's DOB <span class="req">*</span></label>
-            <input id="motherDob" name="motherDob" type="date" required>
-          </div>
+       <h3>Parents' Details <span class="badge">Section 3</span></h3>
+       <div class="grid">
+        <div class="col-4">
+         <label for="fatherDob">Father's DOB <span class="req">*</span></label>
+         <input id="fatherDob" name="fatherDob" type="date" required>
+        </div>
+        <div class="col-4">
+         <label for="motherName">Mother's Name <span class="req">*</span></label>
+         <input id="motherName" name="motherName" type="text" pattern="[A-Za-z ]+" required>
+        </div>
+        <div class="col-4">
+         <label for="motherDob">Mother's DOB <span class="req">*</span></label>
+         <input id="motherDob" name="motherDob" type="date" required>
+        </div>
+
+        <div class="col-4">
+         <label for="hasbrother">Do you have Brother <span class="req">*</span></label>
+         <select id="hasbrother" name="hasbrother" onchange="updatehasbrother()">
+          <option value="">Select…</option>
+          <option value="No">No</option>
+          <option value="Yes">Yes</option>
+         </select>
+        </div>
+
+        <div id="brotherBlock" class="col-12 hidden" style="margin-top:16px;">
+         <div class="grid">
+          <div class="col-6">
+           <label for="BrotherCount">How many Brother? <span class="req">*</span></label>
+           <select id="BrotherCount" name="BrotherCount" onchange="toggleBrotherCount()">
+            <option value="">Select…</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+           </select>
+         </div>
+       </div>
+
+      <!-- Brother 1 -->
+       <div id="Brother1" class="grid hidden" style="margin-top:12px;">
+        <div class="col-4">
+          <label for="BrotherName1">Brother Name 1 <span class="req">*</span></label>
+          <input id="BrotherName1" name="BrotherName1" type="text" pattern="[A-Za-z ]+">
+        </div>
+        <div class="col-4">
+          <label for="BrotherNumber1">Brother Number 1 <span class="req">*</span></label>
+          <input id="BrotherNumber1" name="BrotherNumber1" type="text" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits">
+        </div>
+        <div class="col-4">
+          <label for="BrotherOccupation1">Brother Occupation 1 <span class="req">*</span></label>
+          <input id="BrotherOccupation1" name="BrotherOccupation1" type="text" pattern="[A-Za-z ]+">
         </div>
       </div>
+
+      <!-- Brother 2 -->
+      <div id="Brother2" class="grid hidden" style="margin-top:12px;">
+        <div class="col-4">
+          <label for="BrotherName2">Brother Name 2 <span class="req">*</span></label>
+          <input id="BrotherName2" name="BrotherName2" type="text" pattern="[A-Za-z ]+">
+        </div>
+        <div class="col-4">
+          <label for="BrotherNumber2">Brother Number 2 <span class="req">*</span></label>
+          <input id="BrotherNumber2" name="BrotherNumber2" type="text" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits">
+        </div>
+        <div class="col-4">
+          <label for="BrotherOccupation2">Brother Occupation 2 <span class="req">*</span></label>
+          <input id="BrotherOccupation2" name="BrotherOccupation2" type="text" pattern="[A-Za-z ]+">
+        </div>
+      </div>
+
+      <!-- Brother 3 -->
+      <div id="Brother3" class="grid hidden" style="margin-top:12px;">
+        <div class="col-4">
+          <label for="BrotherName3">Brother Name 3 <span class="req">*</span></label>
+          <input id="BrotherName3" name="BrotherName3" type="text" pattern="[A-Za-z ]+">
+        </div>
+        <div class="col-4">
+          <label for="BrotherNumber3">Brother Number 3 <span class="req">*</span></label>
+          <input id="BrotherNumber3" name="BrotherNumber3" type="text" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits">
+        </div>
+        <div class="col-4">
+          <label for="BrotherOccupation3">Brother Occupation 3 <span class="req">*</span></label>
+          <input id="BrotherOccupation3" name="BrotherOccupation3" type="text" pattern="[A-Za-z ]+">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
       <!-- ================= Identification ================= -->
       <div class="section">
@@ -382,6 +470,15 @@ input[readonly] { background:#f3f4f6; }
           </div>
 
           <div class="col-4">
+            <label for="EPSScheme">Member of EPS Scheme? <span class="req">*</span></label>
+            <select id="EPSScheme" name="EPSScheme" required>
+              <option value="">Select…</option>
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+          </div>
+
+          <div class="col-4">
             <label for="uan">UAN Number <span class="req">*</span></label>
             <input id="uan" name="uan" inputmode="numeric" maxlength="12" pattern="[0-9]{12}" required>
           </div>
@@ -463,53 +560,93 @@ input[readonly] { background:#f3f4f6; }
 
       <!-- ================= Experience / Fresher ================= -->
       <div class="section">
-        <h3>Work History <span class="badge">Section 8</span></h3>
-        <div class="grid">
-          <div class="col-4">
-            <label for="expStatus">Experienced / Fresher <span class="req">*</span></label>
-            <select id="expStatus" name="expStatus" required>
-              <option value="">Select…</option>
-              <option value="Experienced">Experienced</option>
-              <option value="Fresher">Fresher</option>
-            </select>
-          </div>
+    <h3>Work History <span class="badge">Section 8</span></h3>
+    <div class="grid">
+      <div class="col-4">
+        <label for="expStatus">Experienced / Fresher <span class="req">*</span></label>
+        <select id="expStatus" name="expStatus" required>
+          <option value="">Select…</option>
+          <option value="Experienced">Experienced</option>
+          <option value="Fresher">Fresher</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Experienced -->
+    <div id="expDetails" class="section hidden" style="margin-top:12px;">
+      <div class="grid">
+        <div class="col-12"><strong>Previous Employment</strong></div>
+        <div class="col-4">
+          <label for="prevCompany">Previous Company Name <span class="req">*</span></label>
+          <input id="prevCompany" name="prevCompany" type="text" pattern="[A-Za-z ]+">
         </div>
-
-        <div id="expDetails" class="section hidden" style="margin-top:12px;">
-          <div class="grid">
-            <div class="col-12"><strong>Previous Employment</strong></div>
-            <div class="col-4">
-              <label for="prevCompany">Previous Company Name <span class="req">*</span></label>
-              <input id="prevCompany" name="prevCompany" pattern="[A-Za-z ]+">
-            </div>
-            <div class="col-4">
-              <label for="prevDesignation">Previous Designation <span class="req">*</span></label>
-              <input id="prevDesignation" name="prevDesignation" pattern="[A-Za-z ]+">
-            </div>
-            <div class="col-4">
-              <label for="prevBranch">Previous Branch <span class="req">*</span></label>
-              <input id="prevBranch" name="prevBranch" pattern="[A-Za-z ]+">
-            </div>
-            <div class="col-4">
-              <label for="lastWorkingDay">Last Working Day <span class="req">*</span></label>
-              <input id="lastWorkingDay" name="lastWorkingDay" type="date">
-            </div>
-          </div>
+        <div class="col-4">
+          <label for="prevDesignation">Previous Designation <span class="req">*</span></label>
+          <input id="prevDesignation" name="prevDesignation" type="text" pattern="[A-Za-z ]+">
         </div>
+        <div class="col-4">
+          <label for="prevBranch">Previous Branch <span class="req">*</span></label>
+          <input id="prevBranch" name="prevBranch" type="text" pattern="[A-Za-z ]+">
+        </div>
+        <div class="col-4">
+          <label for="lastWorkingDay">Last Working Day <span class="req">*</span></label>
+          <input id="lastWorkingDay" name="lastWorkingDay" type="date">
+        </div>
+        <div class="col-4">
+          <label for="rmname1">Reporting Manager Name 1 <span class="req">*</span></label>
+          <input id="rmname1" name="rmname1" type="text" pattern="[A-Za-z ]+">
+        </div>
+        <div class="col-4">
+          <label for="rmnumber1">Reporting Manager Number 1 <span class="req">*</span></label>
+          <input id="rmnumber1" name="rmnumber1" type="text" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits">
+        </div>
+        <div class="col-4">
+          <label for="rmname2">Reporting Manager Name 2 <span class="req">*</span></label>
+          <input id="rmname2" name="rmname2" type="text" pattern="[A-Za-z ]+">
+        </div>
+        <div class="col-4">
+          <label for="rmnumber2">Reporting Manager Number 2 <span class="req">*</span></label>
+          <input id="rmnumber2" name="rmnumber2" type="text" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits">
+        </div>
+      </div>
+    </div>
 
-        <div id="fresherDetails" class="section hidden" style="margin-top:12px;">
-          <div class="grid">
-            <div class="col-12"><strong>Referral</strong></div>
-            <div class="col-4">
-              <label for="refBy">Referred by <span class="req">*</span></label>
-              <select id="refBy" name="refBy">
-                <option value="">Select…</option>
-                <option>Social Media</option>
-                <option>Job Portal</option>
-                <option>Seeds Employee reference</option>
-              </select>
-            </div>
+    <!-- Fresher -->
+    <div id="fresherDetails" class="section hidden" style="margin-top:12px;">
+      <div class="grid">
+        <div class="col-12"><strong>Reference Details</strong></div>
+        <div class="col-4">
+          <label for="friendname1">Friend's Name 1 <span class="req">*</span></label>
+          <input id="friendname1" name="friendname1" type="text" pattern="[A-Za-z ]+">
+        </div>
+        <div class="col-4">
+          <label for="friendnumber1">Friend's Number 1 <span class="req">*</span></label>
+          <input id="friendnumber1" name="friendnumber1" type="text" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits">
+        </div>
+        <div class="col-4">
+          <label for="  ">Friend's Name 2 <span class="req">*</span></label>
+          <input id="friendname2" name="friendname2" type="text" pattern="[A-Za-z ]+">
+        </div>
+        <div class="col-4">
+          <label for="friendnumber2">Friend's Number 2 <span class="req">*</span></label>
+          <input id="friendnumber2" name="friendnumber2" type="text" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" placeholder="10 digits">
+        </div>  
+      </div>
+    </div>
 
+    <!-- Referral (Always Visible & Mandatory) -->
+    <div id="referral" class="section" style="margin-top:12px;">
+      <div class="grid">
+        <div class="col-12"><strong>Referral</strong></div>
+        <div class="col-4">
+          <label for="refBy">Referred by <span class="req">*</span></label>
+          <select id="refBy" name="refBy" required>
+            <option value="">Select…</option>
+            <option>Social Media</option>
+            <option>Job Portal</option>
+            <option>Seeds Employee reference</option>
+          </select>
+        </div>
             <div id="refExtra" class="col-12 hidden">
               <div class="grid">
                 <div class="col-4">
@@ -557,7 +694,7 @@ input[readonly] { background:#f3f4f6; }
           </div>
           <div class="col-4">
             <label for="emgNum1">Emergency Contact Number 1 <span class="req">*</span></label>
-            <input id="emgNum1" name="emgNum1" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" required>
+            <input id="emgNum1" name="emgNum1" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" required>
             <div id="emg1Err" class="error hidden">Emergency number 1 must be different from mobile.</div>
           </div>
           <div class="col-4">
@@ -573,7 +710,7 @@ input[readonly] { background:#f3f4f6; }
           </div>
           <div class="col-4">
             <label for="emgNum2">Emergency Contact Number 2 <span class="req">*</span></label>
-            <input id="emgNum2" name="emgNum2" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" required>
+            <input id="emgNum2" name="emgNum2" inputmode="numeric" minlength="10" maxlength="10" pattern="[0-9]{10}" required>
             <div id="emg2Err" class="error hidden">Emergency number 2 must be different from mobile.</div>
           </div>
           <div class="col-4">
@@ -588,18 +725,10 @@ input[readonly] { background:#f3f4f6; }
 <div class="section">
   <h3>Documents Upload <span class="badge">Section 10</span></h3>
   <div class="grid">
-  <div class="col-12">
-   <label for="signatureBox">Signature Box <span class="req">*</span></label>
-   <div style="border: 1px solid #e5e7eb; background: #fff; border-radius: 10px; padding: 8px;">
-    <canvas id="signatureBox" width="400" height="120" style="border-radius:8px; border:1px solid #c7d2fe; background:#f3f4f6; width:100%; max-width:400px; touch-action: none;"></canvas>
-    <div class="row" style="margin-top:6px;">
-      <button type="button" id="clearSign" class="btn" style="padding:6px 12px; font-size:13px;">Clear</button>
-    </div>
-    <small class="hint">Sign using mouse or touch. Your signature will be saved.</small>
+  <div class="col-6">
+   <label for="signatureUpload">Signature Upload <span class="req">*</span></label>
+   <input id="signatureUpload" name="signatureUpload" type="file" accept=".jpg,.jpeg,.png,.pdf" required>
   </div>
-  <input type="hidden" id="signatureData" name="signatureData" required>
-  <div id="signError" class="error hidden">Signature is required.</div>
-</div>
 
     <div class="col-6">
       <label for="resume">Resume <span class="req">*</span></label>
@@ -665,8 +794,178 @@ input[readonly] { background:#f3f4f6; }
       <label for="salarySlips">Three Months Salary Slips (Multiple Upload) <span class="req">*</span></label>
       <input id="salarySlips" name="salarySlips[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
     </div>
-  </div>
-</div>
+
+    <div class="col-6">
+      <label for="formF">Form-F Nomination (Multiple Upload) <span class="req">*</span></label>
+      <input id="formF" name="formF[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+    </div>
+
+    <div class="col-6">
+      <label for="esicForm">ESIC Form No.1 (Multiple Upload) <span class="req">*</span></label>
+      <input id="esicForm" name="esicForm[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+    </div>
+
+    <div class="col-6">
+      <label for="epfForm">EPF Form No.11 (Multiple Upload) <span class="req">*</span></label>
+      <input id="epfForm" name="epfForm[]" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+    </div>
+
+    <div class="col-12" style="margin-top:20px; text-align:center;">
+      <div class="terms-card" style="
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 20px;
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+        border-radius: 10px;
+      ">
+      <input type="checkbox" id="agree" name="agree" required disabled 
+         style="transform: scale(1.3); cursor:not-allowed;" />
+      <label for="agree" style="margin:0; font-size:15px; cursor:pointer;">
+          I agree with 
+          <a href="#" onclick="openTerms(event)" 
+            style="color:#2563eb; font-weight:500; text-decoration:underline;">
+            Terms & Conditions
+          </a>
+          <span class="req">*</span>
+        </label>
+      </div>
+      <div id="agreeError" class="error" 
+       style="color:red; font-size:13px; margin-top:6px; text-align:center;">
+      </div>
+    </div>
+
+<!-- Modal with PDF -->
+    <div id="termsModal" class="hidden">
+     <div class="modal-content">
+      <span class="close-btn" onclick="closeTerms()">&times;</span>
+      <h2>Terms & Conditions</h2>
+
+    <!-- Scrollable container -->
+      <div id="pdfContainer">
+       <iframe 
+        src="https://docs.google.com/gview?url=https://raw.githubusercontent.com/SeedsFincappvtltd/Joining-Form/763d00fa754e81210694c06287d3ef446e7485e4/Terms-and-conditions.pdf&embedded=true" 
+        width="100%" 
+        height="100%"
+        style="border:none;">
+       </iframe>
+      </div>
+
+      <br/>
+      <button id="closeBtn" onclick="closeTerms()" disabled>Close</button>
+      <p id="scrollNote" style="color:red; font-size:13px;">
+        Please scroll to the bottom to enable the Close button.
+      </p>
+     </div>
+    </div>
+
+    <style>
+    /* Modal background */
+    #termsModal {
+     position: fixed;
+     top: 0; left: 0; right: 0; bottom: 0;
+     background: rgba(0,0,0,0.7);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     z-index: 2000;
+    }
+    #termsModal.hidden { display: none; }
+
+    /* Modal content */
+    .modal-content {
+     background: #fff;
+     padding: 20px;
+     border-radius: 12px;
+     width: 95%;
+     height: 95%;
+     overflow: auto;
+     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .modal-content h2 { 
+      margin-top: 0;
+      margin-bottom: 10px; 
+    }
+
+    .modal-content button {
+     margin-top: 10px;
+     padding: 10px 20px;
+     background: #2563eb;
+     color: #fff;
+     border: none;
+     border-radius: 8px;
+     cursor: not-allowed;
+     opacity: 0.6;
+     align-self: flex-end;
+    }
+    .modal-content button.enabled {
+     cursor: pointer;
+     opacity: 1;
+    }
+
+    /* Scrollable PDF container */
+    #pdfContainer {
+     width: 100%;
+     height: 100%;
+     overflow-y: scroll;
+     border: 1px solid #ccc;
+     border-radius: 8px;
+    }
+    #pdfContainer iframe {
+     width: 100%;
+     height: 800px; /* taller than container so scroll is required */
+     border: none;
+    }
+    </style>
+
+    <script>
+     let hasScrolledToBottom = false;
+     
+     function openTerms(event) {
+      event.preventDefault();
+      document.getElementById("termsModal").classList.remove("hidden");
+    }
+
+    // Close modal & enable checkbox
+    function closeTerms() {
+     document.getElementById("termsModal").classList.add("hidden");
+     if (hasScrolledToBottom) {
+      const agree = document.getElementById("agree");
+      agree.disabled = false;
+      agree.style.cursor = "pointer";
+     }
+    } 
+    // Detect scroll inside container
+    document.addEventListener("DOMContentLoaded", () => {
+     const container = document.getElementById("pdfContainer");
+     const closeBtn = document.getElementById("closeBtn");
+     const scrollNote = document.getElementById("scrollNote");
+
+     container.addEventListener("scroll", () => {
+      if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+       hasScrolledToBottom = true; 
+       closeBtn.disabled = false;
+       closeBtn.classList.add("enabled");
+       closeBtn.style.cursor = "pointer";
+       scrollNote.style.display = "none";
+      }
+     });
+    });
+
+    function validateForm() {
+      const agree = document.getElementById("agree");
+      const error = document.getElementById("agreeError");
+
+      if (!agree.checked) {
+        error.textContent = "⚠️ Please accept Terms & Conditions before submitting.";
+        return false; // prevent form submission
+      }
+
+      error.textContent = "";
+      return true; // allow submission
+    }
+    </script>
 
 
 <div class="toolbar">
@@ -719,7 +1018,7 @@ input[readonly] { background:#f3f4f6; }
   function setDojWindow() {
     const today = new Date();
     const max = today.toISOString().split('T')[0];
-    const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
+    const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const min = minDate.toISOString().split('T')[0];
     const doj = $('doj');
     doj.min = min;
@@ -790,6 +1089,38 @@ input[readonly] { background:#f3f4f6; }
       show($('child1')); show($('child2'));
       setReq($('child1Name'), true); setReq($('child1Dob'), true);
       setReq($('child2Name'), true); setReq($('child2Dob'), true);
+    }
+  }
+
+  function updatehasbrother() {
+    const val = $('hasbrother').value;
+    if (val === 'Yes') {
+      show($('brotherBlock'));
+      setReq($('BrotherCount'), true);
+    } else {
+      hide($('brotherBlock'));
+      setReq($('BrotherCount'), false);
+      toggleBrotherCount('0');
+    }
+  }
+
+  function toggleBrotherCount(val = $('BrotherCount').value) {
+    hide($('Brother1')); hide($('Brother2')); hide($('Brother3'));
+    setReq($('BrotherName1'), false); setReq($('BrotherNumber1'), false); setReq($('BrotherOccupation1'), false);
+    setReq($('BrotherName2'), false); setReq($('BrotherNumber2'), false); setReq($('BrotherOccupation2'), false);
+    setReq($('BrotherName3'), false); setReq($('BrotherNumber3'), false); setReq($('BrotherOccupation3'), false);
+    if (val === '1') {
+      show($('Brother1'));
+      setReq($('BrotherName1'), true); setReq($('BrotherNumber1'), true); setReq($('BrotherOccupation1'), true);
+    } else if (val === '2') {
+      show($('Brother1')); show($('Brother2'));
+      setReq($('BrotherName1'), true); setReq($('BrotherNumber1'), true); setReq($('BrotherOccupation1'), true);
+      setReq($('BrotherName2'), true); setReq($('BrotherNumber2'), true); setReq($('BrotherOccupation2'), true);
+    } else if (val === '3') {
+      show($('Brother1')); show($('Brother2')); show($('Brother3'));
+      setReq($('BrotherName1'), true); setReq($('BrotherNumber1'), true); setReq($('BrotherOccupation1'), true);
+      setReq($('BrotherName2'), true); setReq($('BrotherNumber2'), true); setReq($('BrotherOccupation2'), true);
+      setReq($('BrotherName3'), true); setReq($('BrotherNumber3'), true); setReq($('BrotherOccupation3'), true); 
     }
   }
 
