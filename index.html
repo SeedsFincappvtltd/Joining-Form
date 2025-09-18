@@ -739,6 +739,11 @@
     </div>
 
     <div class="col-6">
+      <label for="Cibil">Cibil Report <span class="req">*</span></label>
+      <input id="Cibil" name="Cibil" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple required>
+    </div>
+
+    <div class="col-6">
       <label for="photo">Photo <span class="req">*</span></label>
       <input id="photo" name="photo" type="file" accept=".jpg,.jpeg,.png" required>
     </div>
@@ -1303,6 +1308,7 @@
       }
     }
     await addMultiFiles("aadhaarUpload[]");
+    await addMultiFiles("Cibil");
     await addMultiFiles("dlUpload[]");
     await addMultiFiles("familyPhoto[]");
     await addMultiFiles("fatherAadhaar[]");
@@ -1313,13 +1319,23 @@
     await addMultiFiles("relievingLetter[]");
     await addMultiFiles("salarySlips[]");
     await addMultiFiles("formF[]");
-    await addMultiFiles("esicForm");
-    await addMultiFiles("epfForm");
+    await addMultiFiles("esicForm[]");
+    await addMultiFiles("epfForm[]");
 
+    const finalData = new FormData(form);
+
+    // Add base64 files from payload
+    for (const key in payload) {
+     if (Array.isArray(payload[key])) {
+      payload[key].forEach((file, i) => finalData.append(key, file));
+     } else {
+       finalData.append(key, payload[key]);
+     }
+    }
 
     fetch(form.action, {
-      method: "POST",
-      body: new URLSearchParams(payload)
+     method: "POST",
+     body: finalData
     })
     .then(r => r.json())
     .then(data => {
