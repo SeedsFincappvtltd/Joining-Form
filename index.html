@@ -658,7 +658,7 @@
                 </div>
                 <div class="col-4">
                   <label for="refName">Employee name of referrer <span class="req">*</span></label>
-                  <input id="refName" name="refName" pattern="[A-Za-z ]+">
+                  <input id="refName" name="refName" pattern="[A-Za-z ]+" readonly>
                 </div>
               </div>
             </div>
@@ -1200,6 +1200,25 @@
       setReq($('refName'), false);
     }
   }
+  
+  let employeeData = {};
+
+  // Load all employee data once at form load
+  window.addEventListener("DOMContentLoaded", () => {
+    fetch("https://script.google.com/macros/s/AKfycbwGTxbFgHzI095yzsNPLe-ksdX7skbsrQ2l1t3hm-xmE54jLUbFaz_EiOdJhI3-U2Xf/exec")
+      .then(r => r.json())
+      .then(data => {
+        employeeData = data; // store in memory
+        console.log("Employee data loaded:", Object.keys(employeeData).length, "records");
+      })
+      .catch(err => console.error("Error loading employee master:", err));
+  });
+
+  // Lookup instantly in browser (no server call)
+  document.getElementById("refCode").addEventListener("input", function () {
+    const code = this.value.trim();
+    document.getElementById("refName").value = employeeData[code] || "";
+  });
 
   // ---------- Same address copy ----------
   $('sameAddress').addEventListener('change', (e) => {
